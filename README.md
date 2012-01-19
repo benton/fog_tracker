@@ -21,11 +21,31 @@ The Fog Cost Tracker is intended to be a foundation library, on top of which mor
 ----------------
 Installation
 ----------------
-1) Install the Fog Cost Tracker gem (use _sudo_ as necessary).
+Install the Fog Cost Tracker gem and your database adaptor of choice.
 
-    gem install fog_cost_tracker
+    gem install fog_cost_tracker sqlite3
 
-2) Install your database adaptor of choice. Sqlite3 is installed with Fog Cost Tracker, so this step may be optional.
+
+----------------
+Usage [from within Ruby]
+----------------
+1) Insert the necessary tables into your database.
+  First, `require 'FogCostTracker/tasks'` from your Rakefile, then run
+
+    rake db:migrate:tracker
+
+2) In your Ruby app, first set up an ActiveRecord connection. In Rails, this is done for you automatically, but here's an example for a non-Rails app:
+
+    require 'fog_cost_tracker'
+    ActiveRecord::Base.establish_connection({
+      :adapter => 'sqlite3', :database => 'fog_cost_tracker.sqlite3'
+    })
+
+3) To track all accounts loaded from Fog:
+
+    t = Tracker.new             # A Tracker updates all accounts detected from Fog
+    t.poll_time = 60            # Update every 60 seconds
+    t.start                     # Runs in the background. Call 'stop' later
 
 
 ----------------
@@ -85,31 +105,9 @@ Usage [from the command line]
 
 
 ----------------
-Usage [from within Ruby]
-----------------
-1) Insert the necessary tables into your database.
-  First, `require 'FogCostTracker/tasks'` from your Rakefile, then run
-
-    rake db:migrate:tracker
-
-2) In your Ruby app, first set up an ActiveRecord connection. In Rails, this is done for you automatically, but here's an example for a non-Rails app:
-
-    require 'fog_cost_tracker'
-    ActiveRecord::Base.establish_connection({
-      :adapter => 'sqlite3', :database => 'fog_cost_tracker.sqlite3'
-    })
-
-3) To track all accounts loaded from Fog:
-
-    t = Tracker.new             # A Tracker updates all accounts detected from Fog
-    t.poll_time = 60            # Update every 60 seconds
-    t.start                     # Runs in the background. Call 'stop' later
-
-
-----------------
 Development
 ----------------
-This project is still in its early stages, but mush of the framework is in place. More resource costs need to be modeled, but the patterns for the code to do so are now laid out. Helping hands are appreciated!
+This project is still in its early stages, but much of the framework is in place. More resource costs need to be modeled, but the patterns for the code to do so are now laid out. Helping hands are appreciated!
 
 1) Install project dependencies.
 

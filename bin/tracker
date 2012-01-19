@@ -1,0 +1,91 @@
+#!/usr/bin/env ruby 
+
+# == Synopsis 
+#   Monitors one or more FogCost accounts and pushes their status into a database.
+#
+# == Usage 
+#   tracker.rb [options] DB_CONFIG_FILE.YML
+#
+# == Options (all options can be put into the config file)
+#   -d, --delay [INTEGER]       Seconds between status updates. default = 180
+#   -l, --log-level [LEVEL]     Sets Log4r level for console output. default = INFO
+#   -m, --migrate               Update database schema
+#   -h, --help                  Displays help message
+#
+# == Author
+#   Benton Roberts
+
+require 'logger'
+require 'optparse'
+require 'fog_cost_tracker'
+LOG_LVLS = {
+  "DEBUG" => ::Logger::DEBUG,
+  "INFO"  => ::Logger::INFO,
+  "WARN"  => ::Logger::WARN,
+  "ERROR" => ::Logger::ERROR,
+  "FATAL" => ::Logger::FATAL 
+}
+
+class FogCostTrackerConsoleApp
+
+  def initialize
+    @log = ::Logger.new(STDOUT)
+    @log.formatter = proc {|lvl, time, prog, msg|
+      "#{lvl} #{time.strftime '%Y-%m-%d %H:%M:%S %Z'}: #{msg}\n"
+    }
+    parse_options
+    (@log.error "A database config file must be specified" ; exit) if ARGV.empty?
+    db_config_file = ARGV.first
+    @log.info "Loading database configuration from #{db_config_file}"
+    db_config = YAML::load(File.open(db_config_file))
+    connect_to_database(db_config)
+    go
+  end
+
+  def connect_to_database(db_config)
+    @log.info "Connecting to database #{db_config['database']}"
+    require 'active_record'
+    ::ActiveRecord::Base.establish_connection(db_config)
+    migrate if @opts[:migrate]
+  end
+
+  def go
+    @log.info "Tracking..."
+    @tracker = FogCostTracker::Tracker.new(:logger => @log)
+    @tracker.delay = @opts[:delay]
+    @tracker.start
+    while true do 
+      sleep @opts[:delay]   # Loop forever
+    end
+  end
+
+  def parse_options
+    @opts = { :delay  => 180, :log_level => 'INFO' }
+    optparse = OptionParser.new do |opts|
+      opts.on('-d', '--delay SECONDS', Integer,
+      'Number of seconds between status updates') do |delay|
+        @opts[:delay] = delay
+      end
+      opts.on('-l', '--log-level LEVEL', 'Set logging level') do |log_level|
+        @opts[:log_level] = log_level.upcase
+      end
+      opts.on('-m', '--migrate', 'Update database schema') do
+        @opts[:migrate] = true
+      end
+      opts.on('-h', '--help', 'Display this help message') do
+        puts opts and exit
+      end
+    end
+    optparse.parse!
+    @log.level = LOG_LVLS[@opts[:log_level]] if LOG_LVLS[@opts[:log_level]]
+  end
+
+  def migrate
+    @log.info "Updating database schema..."
+    migration_dir = File.expand_path('../../db/migrate', __FILE__)
+    ActiveRecord::Migrator.migrate migration_dir
+  end
+
+end
+
+myApp = FogCostTrackerConsoleApp.new

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby 
 
 # == Synopsis 
-#   Monitors one or more FogCost accounts and pushes their status into a database.
+#   Uses the Fog gem to generate billing records for cloud computing resources
 #
 # == Usage 
 #   tracker.rb [options] DB_CONFIG_FILE.YML

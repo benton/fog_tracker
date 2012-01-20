@@ -15,6 +15,7 @@ module FogCostTracker
       @account      = account_tracker.account
       @log          = account_tracker.log
       @type         = resource_type
+      @connection   = account_tracker.connection
       @log.debug "Created tracker for #{@type} on #{@account_name}."
     end
 
@@ -22,6 +23,7 @@ module FogCostTracker
     # instances of the relevant resource type
     def update
       @log.info "Polling for resource #{@type} on #{@account_name}..."
+      @log.info "Using connection #{@connection.inspect}"
     end
 
   end

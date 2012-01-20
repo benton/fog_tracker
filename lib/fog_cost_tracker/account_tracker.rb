@@ -3,6 +3,7 @@ module FogCostTracker
   # Tracks a single Fog account in an ActiveRecord database
   class AccountTracker
     require 'logger'
+    require 'fog'
 
     attr_reader :name, :account, :log
 
@@ -24,7 +25,7 @@ module FogCostTracker
       @log      = options[:logger] || FogCostTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
                               FogCostTracker::DEFAULT_POLLING_TIME
-      @log.debug "Created tracker for account #{@name}."
+      @log.debug "Creating tracker for account #{@name}."
       create_resource_trackers
     end
 
@@ -54,7 +55,7 @@ module FogCostTracker
       end
     end
 
-    # Invokes the stop method on all the @trackers
+    # Stops all the @resource_trackers
     def stop
       if running?
         @log.info "Stopping tracker for #{name}..."
@@ -68,5 +69,19 @@ module FogCostTracker
     # Returns true or false depending on whether this tracker is polling
     def running? ; @timer != nil end
 
+    # Returns a Fog::Connection object to this account's Fog service
+    def connection
+      creds = @account[:credentials].collect {|k, v| ":#{k} => '#{v}'"}
+      ruby_expr = %W{
+        ::Fog::#{@account[:service]}.new(
+          :provider => '#{@account[:provider]}',
+          #{creds.join ', '} )
+      }.join ' '
+      if not @fog_service
+        @log.info "Creating connection: #{ruby_expr}"
+        @fog_service ||= eval(ruby_expr)
+      end
+      @fog_service
+    end
   end
 end

@@ -78,7 +78,9 @@ module FogCostTracker
           #{creds.join ', '} )
       }.join ' '
       if not @fog_service
-        @log.info "Creating connection: #{ruby_expr}"
+        @log.info "Creating connection to #{@account[:provider]}/"+
+          "#{@account[:service]} for #{name}"
+        @log.debug "About to eval expression: #{ruby_expr}"
         @fog_service ||= eval(ruby_expr)
       end
       @fog_service

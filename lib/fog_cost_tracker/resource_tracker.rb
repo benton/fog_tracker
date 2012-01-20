@@ -23,7 +23,6 @@ module FogCostTracker
     # instances of the relevant resource type
     def update
       @log.info "Polling for resource #{@type} on #{@account_name}..."
-      @log.info "Using connection #{@connection.inspect}"
     end
 
   end

@@ -86,7 +86,7 @@ Usage [from the command line]
         :rackspace_username: XXXXXXXXX
       :polling_time: 180
 
-4) Run the tracker, and point it at the database config file
+4) Run the tracker, and point it at the both the database config file and the accounts file.
 
     tracker database.yml accounts.yml --migrate
 

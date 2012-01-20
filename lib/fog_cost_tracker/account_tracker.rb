@@ -32,10 +32,8 @@ module FogCostTracker
     # Creates and returns an Array of ResourceTracker objects -
     # one for each resource type associated with this account's service
     def create_resource_trackers
-      @resource_trackers = []
-      FogCostTracker.resources_for_service(
-      @account[:provider], @account[:service]).each do |type|
-        @resource_trackers << FogCostTracker::ResourceTracker.new(self, type)
+      @resource_trackers = connection.collections.map do |type|
+        FogCostTracker::ResourceTracker.new(self, type.to_s)
       end
     end
 

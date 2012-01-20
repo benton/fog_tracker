@@ -18,17 +18,4 @@ module FogCostTracker
     logger
   end
 
-  # Returns an Array of Fog Classes associated with the
-  # given provider and service
-  def self.resources_for_service(provider_name, service_name)
-    resources = {
-      "AWS" => {
-        "Compute" => [
-            'server', 'snapshot', 'volume'
-          ]
-      }
-    }
-    resources[provider_name][service_name]
-  end
-
 end

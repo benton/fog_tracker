@@ -11,11 +11,11 @@ module FogCostTracker
     # * +account_tracker+ - a human-readable name for the account (String)
     # * +resource_type+ -
     def initialize(account_tracker, resource_type)
-      @account_name = account_tracker.name
-      @account      = account_tracker.account
-      @log          = account_tracker.log
-      @type         = resource_type
-      @connection   = account_tracker.connection
+      @account_name   = account_tracker.name
+      @account        = account_tracker.account
+      @log            = account_tracker.log
+      @type           = resource_type
+      @connection     = account_tracker.connection
       @log.debug "Created tracker for #{@type} on #{@account_name}."
     end
 

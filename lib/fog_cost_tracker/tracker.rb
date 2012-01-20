@@ -1,65 +1,65 @@
 module FogCostTracker
 
-  # Tracks one or more AwsAccounts in an ActiveRecord database
+  # Tracks one or more Fog accounts in an ActiveRecord database
   class Tracker
     require 'logger'
 
-    attr_accessor :delay  # How many seconds to wait between status updates
-    attr_reader   :log    # a Ruby Logger-compatible object
-    attr_reader   :supported_resources  # maps service tags to resrouce names
-
-    # Creates an object for tracking AWS accounts
-    # Tracked info is stored in an ActiveRecord database with config db_config
-    def initialize(options={})
-      @log   = options[:logger] || FogCostTracker.default_logger
-      @delay = options[:delay]  || 300 # default delay is 5 minutes
-      establish_connections
+    # Creates an object for tracking Fog accounts
+    #
+    # ==== Attributes
+    #
+    # * +accounts+ - a Hash of account information (see accounts.yml.example)
+    # * +options+ - Hash of optional parameters
+    #
+    # ==== Options
+    #
+    # * +:delay+ - Default time between polling of accounts
+    # * +:log+ - a Ruby Logger-compatible object
+    def initialize(accounts = {}, options={})
+      @accounts = accounts
+      @log      = options[:logger]
+      @delay    = options[:delay]
+      # Create a Hash that maps account names to AccountTrackers
+      @trackers = create_trackers(accounts)
     end
 
-    def establish_connections
-      conf_file = File.join(File.dirname(__FILE__),
-        "../../config/supported_resources.yml")
-      @supported_resources = YAML.load File.read conf_file
-      @supported_resources.keys.each do |svc_tag|
-        @log.info "Connecting to #{svc_tag}..."
-        #@services[svc_tag] =
+    # Returns a Hash of AccountTracker objects, indexed by account name
+    #
+    # ==== Attributes
+    #
+    # * +accounts+ - a Hash of account information (see accounts.yml.example)
+    def create_trackers(accounts)
+      accounts.each do |name, account|
+        @log.debug "Setting up tracker for account #{name}"
+        @accounts[name] = AccountTracker.new(
+          name, account, {:delay => @delay, :logger => @log}
+        )
       end
     end
 
-    def services
-      @supported_resources.keys
-    end
-
-    def running?
-      @timer != nil
-    end
-
+    # Invokes the start method on all the @trackers
     def start
       if not running?
-        @timer = Thread.new do
-          while true do
-            services.each do |svc_tag|
-              @supported_resources[svc_tag].each do |resource_name|
-                @log.info "Fetching #{resource_name} from #{svc_tag}..."
-              end
-            end
-            sleep @delay
-          end
-        end
+        @log.info "Tracking #{@trackers.keys.count} accounts..."
+        @accounts.each_value {|tracker| tracker.start}
+        @running = true
       else
-        @log.info "Already tracking #{services.count} services"
+        @log.info "Already tracking #{@trackers.keys.count} accounts"
       end
     end
 
+    # Invokes the stop method on all the @trackers
     def stop
       if running?
         @log.info "Stopping tracker..."
-        @timer.kill
-        @timer = nil
+        @running = false
       else
         @log.info "Tracking already stopped"
       end
     end
+
+    # Returns true or false/nil depending on whether this tracker is polling
+    def running? ; @running end
 
   end
 end

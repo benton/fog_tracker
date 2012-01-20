@@ -5,6 +5,9 @@ require 'logger'
 Dir[File.join(File.dirname(__FILE__), "fog_cost_tracker/**/*.rb")].each {|f| require f}
 
 module FogCostTracker
+
+  DEFAULT_POLLING_TIME = 300   # by default, poll all accounts every 5 minutes
+
   # Returns a slightly-modified version of the default Ruby Logger
   def self.default_logger
     logger = ::Logger.new(STDOUT)
@@ -14,4 +17,18 @@ module FogCostTracker
     }
     logger
   end
+
+  # Returns an Array of Fog Classes associated with the
+  # given provider and service
+  def self.resources_for_service(provider_name, service_name)
+    resources = {
+      "AWS" => {
+        "Compute" => [
+            'server', 'snapshot', 'volume'
+          ]
+      }
+    }
+    resources[provider_name][service_name]
+  end
+
 end

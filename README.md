@@ -9,7 +9,7 @@ discovered by the [Fog gem](https://github.com/fog/fog)
 ----------------
 What is it?
 ----------------
-The Fog Cost Tracker periodically polls one or more cloud computing accounts, and the current state of their associated "resources" -- Compute instances, disk volumes, RDS servers, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created for each resource, containing the cost for that resource since the previous query.
+The Fog Cost Tracker periodically polls one or more cloud computing accounts, and the current state of their associated "resources" -- Compute instances, disk volumes, RDS servers, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created for each resource, containing the cost for that resource over the given polling time.
 
 
 ----------------
@@ -34,26 +34,25 @@ Usage [from within Ruby]
 
     rake db:migrate:tracker
 
-2) In your Ruby app, first set up an ActiveRecord connection. In Rails, this is done for you automatically, but here's an example for a non-Rails app:
+2) In your Ruby app, first set up an ActiveRecord connection. In Rails, this is done for you automatically on startup, but here's an example for a non-Rails app:
 
     require 'fog_cost_tracker'
     ActiveRecord::Base.establish_connection({
       :adapter => 'sqlite3', :database => 'fog_cost_tracker.sqlite3'
     })
 
-3) To track all accounts loaded from Fog:
+3) To track all accounts loaded from a YAML file
+  (see included config/accounts.yml.example, or example below):
 
-    t = Tracker.new             # A Tracker updates all accounts detected from Fog
-    t.poll_time = 60            # Update every 60 seconds
-    t.start                     # Runs in the background. Call 'stop' later
+    tracker = FogCostTracker::Tracker.new(YAML::load(File.read 'accounts.yml'))
+    tracker.start
 
 
 ----------------
 Usage [from the command line]
 ----------------
-1) First, generate an ActiveRecord-style configuration file.
-
-  Here are the sample contents of a `tracker_db.yml`:
+1) First, generate an ActiveRecord-style database configuration file.
+   Here are the contents of a sample `database.yml`:
 
     adapter: sqlite3
     database: fog_cost_tracker.sqlite3
@@ -62,44 +61,34 @@ Usage [from the command line]
 
 2) Create the database to contain the data. This is not necessary if using sqlite.
 
-3) Make sure your `~/.fog` credentials file is set up correctly
+3) Generate a YAML file containing your Fog accounts and their credentials:
+   Here are the contents of a sample `accounts.yml`:
 
-    #######################################################
-    # Fog Credentials File
-    #
-    # Key-value pairs should look like:
-    # :aws_access_key_id:                 SAMPLEXXXXXXXXXXXX
-    :console:
-      :aws_access_key_id:
-      :aws_secret_access_key:
-      :bluebox_api_key:
-      :bluebox_customer_id:
-      :brightbox_client_id:
-      :brightbox_secret:
-      :go_grid_api_key:
-      :go_grid_shared_secret:
-      :google_storage_access_key_id:
-      :google_storage_secret_access_key:
-      :linode_api_key:
-      :local_root:
-      :new_servers_password:
-      :new_servers_username:
-      :public_key_path:
-      :private_key_path:
-      :rackspace_api_key:
-      :rackspace_username:
-      :slicehost_password:
-      :terremark_username:
-      :terremark_password:
-      :zerigo_email:
-      :zerigo_token:
-    #
-    # End of Fog Credentials File
-    #######################################################
+    AWS EC2 development account:
+      :provider: AWS
+      :service: Compute
+      :credentials:
+        :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
+        :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      :polling_time: 180
+    AWS EC2 production account:
+      :provider: AWS
+      :service: Compute
+      :credentials:
+        :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
+        :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      :polling_time: 120
+    Rackspace development account:
+      :provider: Rackspace
+      :service: Compute
+      :credentials:
+        :rackspace_api_key: XXXXXXXXXXXXXXXXXXXX
+        :rackspace_username: XXXXXXXXX
+      :polling_time: 180
 
 4) Run the tracker, and point it at the database config file
 
-    tracker tracker_db.yml --migrate
+    tracker database.yml accounts.yml --migrate
 
   * The `--migrate` argument updates the database to the latest version of the schema, and is only necessary for new databases, or when upgrading to a new version of the Tracker gem.
 

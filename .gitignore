@@ -1,6 +1,7 @@
 *.gem
 .bundle
 Gemfile.lock
+config/accounts.yml
 pkg/*
 *~
 .DS_Store
@@ -8,3 +9,5 @@ pkg/*
 db/*.sqlite3
 log/*.log
 tmp/**/*
+doc
+doc/**/*

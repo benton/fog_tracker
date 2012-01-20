@@ -28,5 +28,6 @@ Gem::Specification.new do |s|
   # Development / Test dependencies
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec"
+  s.add_development_dependency "rdoc"
   s.add_development_dependency "sqlite3"
 end

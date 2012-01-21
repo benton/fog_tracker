@@ -1,4 +1,4 @@
-Fog Cost Tracker
+Cloud Cost Tracker
 ================
 Generates BillingRecords (ActiveRecords) for each cloud computing resource
 discovered by the [Fog gem](https://github.com/fog/fog)
@@ -9,43 +9,44 @@ discovered by the [Fog gem](https://github.com/fog/fog)
 ----------------
 What is it?
 ----------------
-The Fog Cost Tracker periodically polls one or more cloud computing accounts, and the current state of their associated "resources" -- Compute instances, disk volumes, RDS servers, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created for each resource, containing the cost for that resource over the period since its previous BillingRecord.
+The Cloud Cost Tracker periodically polls one or more cloud computing accounts and determines the state of their associated cloud computing "resources": compute instances, disk volumes, stored objects, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created or updated for each resource, containing the cost for that resource over the period since its previous BillingRecord.
 
 
 ----------------
 Why is it?
 ----------------
-The Fog Cost Tracker is intended to be a foundation library, on top of which more complex cloud billing / accounting applications can be built. Although an executable 'tracker' command-line program is included, the library is primarily intended for use from within Rails, or some other ActiveRecord context.
+The Cloud Cost Tracker is intended to be a foundation library, on top of which more complex cloud billing / accounting applications can be built. Although an executable 'tracker' command-line program is included, the library is primarily intended for use from within Rails, or some other ActiveRecord context, that can generate reports based on the BillingRecords.
 
 
 ----------------
 Installation
 ----------------
-Install the Fog Cost Tracker gem and your database adaptor of choice.
+Install the Cloud Cost Tracker gem and your database adaptor of choice.
 
-    gem install fog_cost_tracker sqlite3
+    gem install cloud_cost_tracker sqlite3
 
 
 ----------------
 Usage [from within Ruby]
 ----------------
-1) Insert the necessary tables into your database.
-  First, `require 'FogCostTracker/tasks'` from your Rakefile, then run
+1) Add the BillingRecords table into your database.
+  Just put `require 'CloudCostTracker/tasks'` in your Rakefile, then run
 
     rake db:migrate:tracker
 
-2) In your Ruby app, first set up an ActiveRecord connection. In Rails, this is done for you automatically on startup, but here's an example for a non-Rails app:
+2) In your Ruby app, `require` the gem, and set up an ActiveRecord connection. In Rails, the connection is set up for you automatically on startup, but here's an example for a non-Rails app:
 
-    require 'fog_cost_tracker'
+    require 'cloud_cost_tracker'
     ActiveRecord::Base.establish_connection({
-      :adapter => 'sqlite3', :database => 'fog_cost_tracker.sqlite3'
+      :adapter => 'sqlite3', :database => 'cloud_cost_tracker.sqlite3'
     })
 
-3) To track all accounts loaded from a YAML file
-  (see included config/accounts.yml.example, or example below):
+3) Track all accounts loaded from a YAML file (or the Hash equivalent):
 
-    tracker = FogCostTracker::Tracker.new(YAML::load(File.read 'accounts.yml'))
+    tracker = CloudCostTracker::Tracker.new(YAML::load(File.read 'accounts.yml'))
     tracker.start
+
+  For the accounts file format, see the example below or the included `config/accounts.yml.example`.
 
 
 ----------------
@@ -55,13 +56,13 @@ Usage [from the command line]
    Here are the contents of a sample `database.yml`:
 
     adapter: sqlite3
-    database: fog_cost_tracker.sqlite3
+    database: cloud_cost_tracker.sqlite3
     pool: 5
     timeout: 5000
 
-2) Create the database to contain the data. This is not necessary if using sqlite.
+  If necessary, create the database to contain the data. The BillingRecords table will be created / updated by an ActiveRecord Migration.
 
-3) Generate a YAML file containing your Fog accounts and their credentials:
+2) Generate a YAML file containing your Fog accounts and their credentials:
    Here are the contents of a sample `accounts.yml`:
 
     AWS EC2 development account:
@@ -86,11 +87,11 @@ Usage [from the command line]
         :rackspace_username: XXXXXXXXX
       :polling_time: 180
 
-4) Run the tracker, and point it at the both the database config file and the accounts file.
+3) Run the tracker, and point it at the both the database config file and the accounts file.
 
     tracker database.yml accounts.yml --migrate
 
-  * The `--migrate` argument updates the database to the latest version of the schema, and is only necessary for new databases, or when upgrading to a new version of the Tracker gem.
+  The `--migrate` argument updates the database to the latest version of the schema, and is only necessary for new databases, or when upgrading to a new version of the Tracker gem.
 
 
 ----------------
@@ -104,8 +105,8 @@ This project is still in its early stages, but much of the framework is in place
 
 2) Fetch the project code and bundle up...
 
-    git clone https://github.com/benton/fog_cost_tracker.git
-    cd fog_cost_tracker
+    git clone https://github.com/benton/cloud_cost_tracker.git
+    cd cloud_cost_tracker
     bundle
 
 3) Create a SQLite database for development

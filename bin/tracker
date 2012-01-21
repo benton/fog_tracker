@@ -16,7 +16,7 @@
 #   Benton Roberts
 
 require 'optparse'
-require 'fog_cost_tracker'
+require 'cloud_cost_tracker'
 LOG_LVLS = {
   "DEBUG" => ::Logger::DEBUG,
   "INFO"  => ::Logger::INFO,
@@ -25,17 +25,17 @@ LOG_LVLS = {
   "FATAL" => ::Logger::FATAL
 }
 
-module FogCostTracker
-  class FogCostTrackerConsoleApp
+module CloudCostTracker
+  class CloudCostTrackerConsoleApp
 
     def initialize
-      @log = FogCostTracker.default_logger
+      @log = CloudCostTracker.default_logger
       parse_options
       @log.info "Loading database configuration from #{ARGV[0]}"
       connect_to_database(YAML::load(File.open(ARGV[0])))
       @log.info "Loading account information from #{ARGV[1]}"
       @accounts = YAML::load(File.open(ARGV[1]))
-      @tracker = FogCostTracker::Tracker.new(
+      @tracker = CloudCostTracker::Tracker.new(
         @accounts, {:logger => @log, :delay => @opts[:delay]}
       )
     end
@@ -93,4 +93,4 @@ module FogCostTracker
   end
 end
 
-FogCostTracker::FogCostTrackerConsoleApp.new.go
+CloudCostTracker::CloudCostTrackerConsoleApp.new.go

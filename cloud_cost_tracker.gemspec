@@ -1,20 +1,20 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "fog_cost_tracker/version"
+require "cloud_cost_tracker/version"
 
 Gem::Specification.new do |s|
-  s.name        = "fog_cost_tracker"
-  s.version     = FogCostTracker::VERSION
+  s.name        = "cloud_cost_tracker"
+  s.version     = CloudCostTracker::VERSION
   s.authors     = ["Benton Roberts"]
   s.email       = ["benton@bentonroberts.com"]
-  s.homepage    = "http://github.com/benton/fog_cost_tracker"
+  s.homepage    = "http://github.com/benton/cloud_cost_tracker"
   s.summary     = %q{Generates per-resource, ActiveRecord-compatible }+
                   %q{BillingRecords for Cloud services}
   s.description = %q{This gem peridically polls cloud computing services }+
                   %q{using the fog gem, and generates ActiveRecord rows }+
                   %q{representing BillingRecords for each discovered resource.}
 
-  s.rubyforge_project = "fog_cost_tracker"
+  s.rubyforge_project = "cloud_cost_tracker"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

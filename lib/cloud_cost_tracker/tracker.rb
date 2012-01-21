@@ -1,4 +1,4 @@
-module FogCostTracker
+module CloudCostTracker
 
   # Tracks one or more Fog accounts in an ActiveRecord database
   class Tracker

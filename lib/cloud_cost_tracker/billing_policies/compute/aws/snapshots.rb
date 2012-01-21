@@ -1,4 +1,4 @@
-module FogCostTracker
+module CloudCostTracker
   module Billing
     module Compute
       module AWS

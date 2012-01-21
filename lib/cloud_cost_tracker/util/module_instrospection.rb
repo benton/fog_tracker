@@ -1,5 +1,5 @@
 # Cloud Resources are only tracked if a module is defined for them like:
-#     FogCostTracker::Billing::[provider]::[service]::[resource]
+#     CloudCostTracker::Billing::[provider]::[service]::[resource]
 # To accomplish this, the Module heirarchy needs to be inspectable
 class Module
   def submodules

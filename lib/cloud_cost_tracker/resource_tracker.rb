@@ -1,4 +1,4 @@
-module FogCostTracker
+module CloudCostTracker
 
   # Tracks a single Fog Resource type for a single Account
   class ResourceTracker
@@ -46,7 +46,7 @@ module FogCostTracker
 
     # Creates (as needed) and returns a BillingPolicy object for this resource
     def billing_policy
-      @policy ||= FogCostTracker.get_billing_policy_class(
+      @policy ||= CloudCostTracker.get_billing_policy_class(
         @account[:service], @account[:provider], @type).new
     end
   end

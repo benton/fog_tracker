@@ -1,4 +1,4 @@
-module FogCostTracker
+module CloudCostTracker
   describe BillingRecord do
     before(:each) do
       @bill = BillingRecord.create!(

@@ -1,4 +1,4 @@
-module FogCostTracker
+module CloudCostTracker
   class BillingRecord < ActiveRecord::Base
     # Validations
     validates_presence_of :provider, :service, :account, :resource_id, 

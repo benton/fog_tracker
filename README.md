@@ -9,7 +9,7 @@ discovered by the [Fog gem](https://github.com/fog/fog)
 ----------------
 What is it?
 ----------------
-The Fog Cost Tracker periodically polls one or more cloud computing accounts, and the current state of their associated "resources" -- Compute instances, disk volumes, RDS servers, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created for each resource, containing the cost for that resource over the given polling time.
+The Fog Cost Tracker periodically polls one or more cloud computing accounts, and the current state of their associated "resources" -- Compute instances, disk volumes, RDS servers, and so on. Each time the accounts are queried, an ActiveRecord object (a BillingRecord) is created for each resource, containing the cost for that resource over the period since its previous BillingRecord.
 
 
 ----------------

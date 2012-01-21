@@ -8,9 +8,9 @@ module FogCostTracker
     #
     # ==== Attributes
     #
-    # * +account_tracker+ - a human-readable name for the account (String)
     # * +resource_type+ -
-    def initialize(account_tracker, resource_type)
+    # * +account_tracker+ - a human-readable name for the account (String)
+    def initialize(resource_type, account_tracker)
       @account_name   = account_tracker.name
       @account        = account_tracker.account
       @log            = account_tracker.log

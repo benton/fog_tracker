@@ -6,6 +6,9 @@ Dir[File.join(File.dirname(__FILE__), "fog_cost_tracker/**/*.rb")].each {|f| req
 
 module FogCostTracker
 
+  # The default polling interval in seconds
+  # This. can be overriden when a FogCostTracker::Tracker is created, either
+  # in the +accounts+ definitions, or in the +options+ parameter
   DEFAULT_POLLING_TIME = 300   # by default, poll all accounts every 5 minutes
 
   # Returns a slightly-modified version of the default Ruby Logger

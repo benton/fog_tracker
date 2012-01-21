@@ -13,12 +13,12 @@ module FogCostTracker
     #
     # ==== Options
     #
-    # * +:delay+ - Default time between polling of accounts
+    # * +:delay+ - Time between polling of accounts. Overrides per-account value
     # * +:log+ - a Ruby Logger-compatible object
     def initialize(accounts = {}, options={})
       @accounts = accounts
-      @log      = options[:logger]
       @delay    = options[:delay]
+      @log      = options[:logger]
       # Create a Hash that maps account names to AccountTrackers
       @trackers = create_trackers(accounts)
     end

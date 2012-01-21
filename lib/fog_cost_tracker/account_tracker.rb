@@ -29,14 +29,6 @@ module FogCostTracker
       create_resource_trackers
     end
 
-    # Creates and returns an Array of ResourceTracker objects -
-    # one for each resource type associated with this account's service
-    def create_resource_trackers
-      @resource_trackers = connection.collections.map do |type|
-        FogCostTracker::ResourceTracker.new(self, type.to_s)
-      end
-    end
-
     # Starts a background thread, which updates all @resource_trackers
     def start
       if not running?
@@ -83,5 +75,16 @@ module FogCostTracker
       end
       @fog_service
     end
+
+    private
+
+    # Creates and returns an Array of ResourceTracker objects -
+    # one for each resource type associated with this account's service
+    def create_resource_trackers
+      @resource_trackers = connection.collections.map do |type|
+        FogCostTracker::ResourceTracker.new(type.to_s, self)
+      end
+    end
+
   end
 end

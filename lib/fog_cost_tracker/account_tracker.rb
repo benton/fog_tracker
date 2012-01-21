@@ -60,19 +60,9 @@ module FogCostTracker
 
     # Returns a Fog::Connection object to this account's Fog service
     def connection
-      creds = @account[:credentials].collect {|k, v| ":#{k} => '#{v}'"}
-      ruby_expr = %W{
-        ::Fog::#{@account[:service]}.new(
-          :provider => '#{@account[:provider]}',
-          #{creds.join ', '} )
-      }.join ' '
-      if not @fog_service
-        @log.info "Creating connection to #{@account[:provider]}/"+
-          "#{@account[:service]} for #{name}"
-        @log.debug "About to eval expression: #{ruby_expr}"
-        @fog_service ||= eval(ruby_expr)
-      end
-      @fog_service
+      service_mod = ::Fog::const_get @account[:service]
+      provider_class = service_mod.send(:const_get, @account[:provider])
+      @fog_service ||= provider_class.new(@account[:credentials])
     end
 
     private

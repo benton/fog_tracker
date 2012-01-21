@@ -4,7 +4,7 @@ module FogCostTracker
   class AccountTracker
     require 'fog'
 
-    attr_reader :name, :account, :log
+    attr_reader :name, :account, :log, :delay
 
     # Creates an object for tracking a single Fog account
     #

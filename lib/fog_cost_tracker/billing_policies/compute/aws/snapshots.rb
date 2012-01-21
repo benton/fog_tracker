@@ -4,8 +4,8 @@ module FogCostTracker
       module AWS
         class SnapshotsBillingPolicy
           # returns the cost for a particular resource over some duration (in seconds)
-          def getCostForTime(resource, duration)
-            0
+          def get_cost_for_time(resource, duration)
+            0.0
           end
         end
       end

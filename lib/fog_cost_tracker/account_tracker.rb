@@ -80,9 +80,17 @@ module FogCostTracker
     # Creates and returns an Array of ResourceTracker objects -
     # one for each resource type associated with this account's service
     def create_resource_trackers
-      @resource_trackers = connection.collections.map do |type|
-        FogCostTracker::ResourceTracker.new(type.to_s, self)
+      @resource_trackers = Array.new
+      connection.collections.each do |fog_collection_name|
+        # only create a ResourceTracker if its BillingPolicy class exists
+        if FogCostTracker.get_billing_policy_class(
+          @account[:service], @account[:provider], fog_collection_name
+        )
+          @resource_trackers <<
+            FogCostTracker::ResourceTracker.new(fog_collection_name.to_s, self)
+        end
       end
+      @resource_trackers
     end
 
   end

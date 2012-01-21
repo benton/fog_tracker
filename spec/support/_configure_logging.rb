@@ -1,5 +1,3 @@
-require 'logger'
-
 # Setup a global Logger for all tests
 LOG_LEVEL = ::Logger::WARN
 LOG = FogCostTracker.default_logger

@@ -2,7 +2,6 @@ module FogCostTracker
 
   # Tracks one or more Fog accounts in an ActiveRecord database
   class Tracker
-    require 'logger'
 
     # Creates an object for tracking Fog accounts
     #

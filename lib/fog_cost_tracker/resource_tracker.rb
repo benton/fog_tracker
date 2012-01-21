@@ -2,7 +2,6 @@ module FogCostTracker
 
   # Tracks a single Fog Resource type for a single Account
   class ResourceTracker
-    require 'logger'
 
     # Creates an object for tracking a single Fog account
     #

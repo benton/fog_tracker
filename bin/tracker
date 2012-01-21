@@ -15,7 +15,6 @@
 # == Author
 #   Benton Roberts
 
-require 'logger'
 require 'optparse'
 require 'fog_cost_tracker'
 LOG_LVLS = {

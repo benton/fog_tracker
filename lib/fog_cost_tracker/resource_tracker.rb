@@ -21,7 +21,9 @@ module FogCostTracker
     # Polls the account's connection for updated info on all existing
     # instances of the relevant resource type
     def update
-      @log.info "Polling for resource #{@type} on #{@account_name}..."
+      @log.info "Polling #{@type} on #{@account_name}..."
+      @collection = @connection.send(@type)
+      @log.info "Discovered #{@collection.count} #{@type} on #{@account_name}."
     end
 
   end

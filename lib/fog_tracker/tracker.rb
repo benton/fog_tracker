@@ -1,7 +1,9 @@
-module CloudCostTracker
+module FogTracker
 
   # Tracks one or more Fog accounts in an ActiveRecord database
   class Tracker
+
+    attr_accessor :accounts
 
     # Creates an object for tracking Fog accounts
     #
@@ -51,6 +53,7 @@ module CloudCostTracker
     def stop
       if running?
         @log.info "Stopping tracker..."
+        @accounts.each_value {|tracker| tracker.stop}
         @running = false
       else
         @log.info "Tracking already stopped"

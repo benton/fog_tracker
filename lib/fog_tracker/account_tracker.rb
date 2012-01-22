@@ -1,4 +1,4 @@
-module CloudCostTracker
+module FogTracker
 
   # Tracks a single Fog account in an ActiveRecord database
   class AccountTracker
@@ -21,9 +21,9 @@ module CloudCostTracker
     def initialize(account_name, account, options={})
       @name     = account_name
       @account  = account
-      @log      = options[:logger] || CloudCostTracker.default_logger
+      @log      = options[:logger] || FogTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
-                              CloudCostTracker::DEFAULT_POLLING_TIME
+                              FogTracker::DEFAULT_POLLING_TIME
       @log.debug "Creating tracker for account #{@name}."
       create_resource_trackers
     end
@@ -67,20 +67,19 @@ module CloudCostTracker
 
     private
 
+    # Returns an Array of resource types (Strings) to track
+    def tracked_types
+      connection.collections.delete_if do |resource_type|
+        account[:exclude_resources].include? resource_type
+      end
+    end
+
     # Creates and returns an Array of ResourceTracker objects -
     # one for each resource type associated with this account's service
     def create_resource_trackers
-      @resource_trackers = Array.new
-      connection.collections.each do |fog_collection_name|
-        # only create a ResourceTracker if its BillingPolicy class exists
-        if CloudCostTracker.get_billing_policy_class(
-          @account[:service], @account[:provider], fog_collection_name
-        )
-          @resource_trackers <<
-            CloudCostTracker::ResourceTracker.new(fog_collection_name.to_s, self)
-        end
+      @resource_trackers = tracked_types.map do |fog_collection_name|
+        FogTracker::ResourceTracker.new(fog_collection_name.to_s, self)
       end
-      @resource_trackers
     end
 
   end

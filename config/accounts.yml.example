@@ -1,10 +1,3 @@
-AWS EC2 development account: 
-  :provider: AWS
-  :service: Compute
-  :credentials: 
-    :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
-    :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  :polling_time: 180
 AWS EC2 production account: 
   :provider: AWS
   :service: Compute
@@ -12,6 +5,17 @@ AWS EC2 production account:
     :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
     :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   :polling_time: 120
+  :exclude_resources:
+AWS EC2 development account: 
+  :provider: AWS
+  :service: Compute
+  :credentials: 
+    :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
+    :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+  :polling_time: 180
+  :exclude_resources:
+  - :flavors
+  - :images
 Rackspace development account: 
   :provider: Rackspace
   :service: Compute

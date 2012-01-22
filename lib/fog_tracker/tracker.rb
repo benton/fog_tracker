@@ -24,7 +24,7 @@ module FogTracker
       @callback = options[:callback]
       @log      = options[:logger] || FogTracker.default_logger
       # Create a Hash that maps account names to AccountTrackers
-      @trackers = create_trackers(accounts)
+      create_trackers(accounts)
     end
 
     # Returns a Hash of AccountTracker objects, indexed by account name
@@ -33,9 +33,10 @@ module FogTracker
     #
     # * +accounts+ - a Hash of account information (see accounts.yml.example)
     def create_trackers(accounts)
+      @trackers = Hash.new
       accounts.each do |name, account|
         @log.debug "Setting up tracker for account #{name}"
-        @accounts[name] = AccountTracker.new(name, account,
+        @trackers[name] = AccountTracker.new(name, account,
           {:delay => @delay, :callback => @callback, :logger => @log})
       end
     end
@@ -44,7 +45,7 @@ module FogTracker
     def start
       if not running?
         @log.info "Tracking #{@trackers.keys.count} accounts..."
-        @accounts.each_value {|tracker| tracker.start}
+        @trackers.each_value {|tracker| tracker.start}
         @running = true
       else
         @log.info "Already tracking #{@trackers.keys.count} accounts"
@@ -55,7 +56,7 @@ module FogTracker
     def stop
       if running?
         @log.info "Stopping tracker..."
-        @accounts.each_value {|tracker| tracker.stop}
+        @trackers.each_value {|tracker| tracker.stop}
         @running = false
       else
         @log.info "Tracking already stopped"
@@ -64,6 +65,11 @@ module FogTracker
 
     # Returns true or false/nil depending on whether this tracker is polling
     def running? ; @running end
+
+    # Returns an array of Resource types (Strings) for a given account
+    def types_for_account(account_name)
+      @trackers[account_name].tracked_types
+    end
 
   end
 end

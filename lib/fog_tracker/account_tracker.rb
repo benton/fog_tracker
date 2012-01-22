@@ -75,14 +75,14 @@ module FogTracker
       @fog_service ||= provider_class.new(@account[:credentials])
     end
 
-    private
-
     # Returns an Array of resource types (Strings) to track
     def tracked_types
       connection.collections.delete_if do |resource_type|
         account[:exclude_resources].include? resource_type
       end
     end
+
+    private
 
     # Creates and returns an Array of ResourceTracker objects -
     # one for each resource type associated with this account's service

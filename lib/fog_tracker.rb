@@ -12,7 +12,7 @@ module FogTracker
 
   # Returns a slightly-modified version of the default Ruby Logger
   def self.default_logger
-    logger = ::Logger.new(STDOUT)
+    logger = ::Logger.new(nil)
     logger.sev_threshold = Logger::INFO
     logger.formatter = proc {|lvl, time, prog, msg|
       "#{lvl} #{time.strftime '%Y-%m-%d %H:%M:%S %Z'}: #{msg}\n"

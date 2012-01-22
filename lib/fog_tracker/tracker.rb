@@ -19,7 +19,7 @@ module FogTracker
     def initialize(accounts = {}, options={})
       @accounts = accounts
       @delay    = options[:delay]
-      @log      = options[:logger]
+      @log      = options[:logger] || FogTracker.default_logger
       # Create a Hash that maps account names to AccountTrackers
       @trackers = create_trackers(accounts)
     end

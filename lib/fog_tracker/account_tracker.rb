@@ -17,10 +17,13 @@ module FogTracker
     # ==== Options
     #
     # * +:delay+ - Default time between polling of accounts
-    # * +:log+ - a Ruby Logger-compatible object
+    # * +:callback+ - A Method or Proc to call each time an account is polled.
+    #     It should take the name of the account as its only required parameter
+    # * +:logger+ - a Ruby Logger-compatible object
     def initialize(account_name, account, options={})
       @name     = account_name
       @account  = account
+      @callback = options[:callback]
       @log      = options[:logger] || FogTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
                               FogTracker::DEFAULT_POLLING_TIME
@@ -33,10 +36,17 @@ module FogTracker
       if not running?
       @log.debug "Starting tracking for account #{@name}..."
         @timer = Thread.new do
-          while true do
-            @log.info "Polling account #{@name}..."
-            @resource_trackers.each {|tracker| tracker.update}
-            sleep @delay
+          begin
+            while true do
+              @log.info "Polling account #{@name}..."
+              @resource_trackers.each {|tracker| tracker.update}
+              @callback.call @name if @callback
+              sleep @delay
+            end
+          rescue Exception => e
+            @log.error "on account #{name}: #{e.message}"
+            @log.error e.backtrace.inspect
+            exit
           end
         end
       else

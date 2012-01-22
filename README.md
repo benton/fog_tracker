@@ -34,7 +34,7 @@ How is it [done]? (Usage)
     tracker = FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'))
     tracker.start
 
-Here are the contents of a sample `accounts.yml`:
+  Here are the contents of a sample `accounts.yml`:
 
     AWS EC2 development account:
       :provider: AWS
@@ -54,14 +54,15 @@ Here are the contents of a sample `accounts.yml`:
         :rackspace_username: XXXXXXXXX
       :polling_time: 180
 
-2) The tracker will run asynchronously. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects in several ways:
+2) The tracker will run asynchronously, with one thread per account. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects in several ways:
 
 	# get all Compute instances across all accounts and providers
 	tracker.get(:service => "Compute", :type => "server")
 
 	# get all Amazon Web Services Compute Instances across all accounts
 	tracker.get(:service => "Compute", :type => "server", :provider => "AWS")
-
+  
+  (You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated -- see docs for details).
 
 ----------------
 Who is it? (Contribution / Development)

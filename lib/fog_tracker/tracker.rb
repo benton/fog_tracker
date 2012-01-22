@@ -24,21 +24,7 @@ module FogTracker
       @callback = options[:callback]
       @log      = options[:logger] || FogTracker.default_logger
       # Create a Hash that maps account names to AccountTrackers
-      create_trackers(accounts)
-    end
-
-    # Returns a Hash of AccountTracker objects, indexed by account name
-    #
-    # ==== Attributes
-    #
-    # * +accounts+ - a Hash of account information (see accounts.yml.example)
-    def create_trackers(accounts)
-      @trackers = Hash.new
-      accounts.each do |name, account|
-        @log.debug "Setting up tracker for account #{name}"
-        @trackers[name] = AccountTracker.new(name, account,
-          {:delay => @delay, :callback => @callback, :logger => @log})
-      end
+      create_trackers
     end
 
     # Invokes the start method on all the @trackers
@@ -69,6 +55,25 @@ module FogTracker
     # Returns an array of Resource types (Strings) for a given account
     def types_for_account(account_name)
       @trackers[account_name].tracked_types
+    end
+
+    # Returns an array of Resources based on the +query_string+
+    # Queries are like "Account Name::Compute::AWS::servers"
+    def query(query_string)
+      Array.new
+    end
+    alias :[] :query
+
+    private
+
+    # Creates a Hash of AccountTracker objects, indexed by account name
+    def create_trackers
+      @trackers = Hash.new
+      @accounts.each do |name, account|
+        @log.debug "Setting up tracker for account #{name}"
+        @trackers[name] = AccountTracker.new(name, account,
+        {:delay => @delay, :callback => @callback, :logger => @log})
+      end
     end
 
   end

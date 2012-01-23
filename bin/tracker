@@ -28,7 +28,7 @@ module FogTracker
   class FogTrackerConsoleApp
 
     def initialize
-      @log = FogTracker.default_logger
+      @log = FogTracker.default_logger(STDOUT)
       parse_options
       @log.info "Loading account information from #{ARGV[0]}"
       @accounts = YAML::load(File.open(ARGV[0]))

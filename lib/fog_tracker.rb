@@ -11,8 +11,8 @@ module FogTracker
   DEFAULT_POLLING_TIME = 300   # by default, poll all accounts every 5 minutes
 
   # Returns a slightly-modified version of the default Ruby Logger
-  def self.default_logger
-    logger = ::Logger.new(nil)
+  def self.default_logger(output = nil)
+    logger = ::Logger.new(output)
     logger.sev_threshold = Logger::INFO
     logger.formatter = proc {|lvl, time, prog, msg|
       "#{lvl} #{time.strftime '%Y-%m-%d %H:%M:%S %Z'}: #{msg}\n"

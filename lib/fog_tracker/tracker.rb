@@ -64,8 +64,9 @@ module FogTracker
     # * +query_string+ - a String used to filter the discovered Resources
     #          it might look like: "Account Name::Compute::AWS::servers"
     def query(query_string)
-      processor = FogTracker::Query::QueryProcessor.new(@trackers)
-      processor.execute(query_string)
+      FogTracker::Query::QueryProcessor.new(
+        @trackers, :logger => @log
+      ).execute(query_string)
     end
     alias :[] :query
 

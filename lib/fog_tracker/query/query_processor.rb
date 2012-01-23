@@ -25,12 +25,13 @@ module FogTracker
         results_by_account = get_results_by_account(acct_pattern)
         results = filter_by_service(results_by_account, svc_pattern)
         results = filter_by_provider(results, prov_pattern)
+        results = filter_by_collection(results, col_pattern)
       end
 
       # Returns an Array of 4 RegEx objeccts based on the +query_string+
       # for matching [account name, service, provider, collection]
       def parse_query(query_string)
-        @log.warn "Parsing Query #{query_string}"
+        @log.debug "Parsing Query #{query_string}"
         tokenize(query_string).map {|token| regex_from_token(token)}
       end
 
@@ -79,9 +80,12 @@ module FogTracker
         end
       end
 
-      # filters an Array of Fog Resources by Resource Type
-      def filter_by_type(resources)
-
+      # filters an Array of Fog Resources by collection name (Resource Type)
+      def filter_by_collection(resources, collection_pattern)
+        resources.select do |resource|
+          collection_class = resource.collection.class.name.match(/::(\w+)$/)[1]
+          collection_class.to_underscore.match collection_pattern
+        end
       end
 
     end

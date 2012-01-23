@@ -80,7 +80,7 @@ module FogTracker
     def tracked_types
       connection.collections.delete_if do |resource_type|
         account[:exclude_resources] &&
-          account[:exclude_resources].include? resource_type
+          account[:exclude_resources].include?(resource_type)
       end
     end
 

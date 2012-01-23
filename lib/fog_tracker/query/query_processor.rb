@@ -23,7 +23,8 @@ module FogTracker
       def execute(query)
         acct_pattern, svc_pattern, prov_pattern, col_pattern = parse_query(query)
         results_by_account = get_results_by_account(acct_pattern)
-        #results_by_account
+        results = filter_by_service(results_by_account, svc_pattern)
+        results = filter_by_provider(results, prov_pattern)
       end
 
       # Returns an Array of 4 RegEx objeccts based on the +query_string+
@@ -63,19 +64,26 @@ module FogTracker
       end
 
       # filters an Array of Fog Resources by Service
-      def filter_by_service(resources)
-
+      def filter_by_service(resources, service_pattern)
+        resources.select do |resource|
+          service_name = resource.class.name.match(/Fog::(\w+)::/)[1]
+          service_name.match service_pattern
+        end
       end
 
       # filters an Array of Fog Resources by Provider
-      def filter_by_provider(resources)
-
+      def filter_by_provider(resources, provider_pattern)
+        resources.select do |resource|
+          provider_name = resource.class.name.match(/Fog::\w+::(\w+)::/)[1]
+          provider_name.match provider_pattern
+        end
       end
 
       # filters an Array of Fog Resources by Resource Type
       def filter_by_type(resources)
 
       end
+
     end
   end
 end

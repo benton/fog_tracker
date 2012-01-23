@@ -1,6 +1,9 @@
 module FogTracker
   module Query
     class QueryProcessor
+
+      QUERY_PATTERN = %r{(.*)::(.*)::(.*)::(.*)}
+
       # Creates an object for filtering Resources from a set of AccountTrackers
       #
       # ==== Attributes
@@ -18,17 +21,61 @@ module FogTracker
 
       # Returns an Array of Resources, filtered by +query+
       def execute(query)
+        acct_pattern, svc_pattern, prov_pattern, col_pattern = parse_query(query)
+        results_by_account = get_results_by_account(acct_pattern)
+        #results_by_account
+      end
+
+      # Returns an Array of 4 RegEx objeccts based on the +query_string+
+      # for matching [account name, service, provider, collection]
+      def parse_query(query_string)
+        @log.warn "Parsing Query #{query_string}"
+        tokenize(query_string).map {|token| regex_from_token(token)}
+      end
+
+      # Returns an array of 4 String tokens by splitting +query_string+
+      def tokenize(query_string)
+        query_string.strip!
+        if match = query_string.match(QUERY_PATTERN)
+          match.captures
+        else
+          raise "Bad query: '#{query_string}'"
+        end
+      end
+
+      # Converts a String +token+ into a RegEx for matching query values
+      def regex_from_token(token)
+        token = '.*' if token == '*'  # a single wildcard is a special case
+        %r{^\s*#{token}\s*$}i         # otherwise, interpret as a RegEx
+      end
+
+      # Returns a subset of all Resources, filtered only by +acct_name_pattern+
+      def get_results_by_account(acct_name_pattern)
         results = Array.new
         @trackers.each do |account_name, account_tracker|
-          account_tracker.resource_trackers.each do |resource_tracker|
-            resource_tracker.collection.each do |resource|
-              results << resource
+          if account_name.match acct_name_pattern
+            account_tracker.resource_trackers.each do |resource_tracker|
+              results += resource_tracker.collection
             end
           end
         end
         results
       end
 
+      # filters an Array of Fog Resources by Service
+      def filter_by_service(resources)
+
+      end
+
+      # filters an Array of Fog Resources by Provider
+      def filter_by_provider(resources)
+
+      end
+
+      # filters an Array of Fog Resources by Resource Type
+      def filter_by_type(resources)
+
+      end
     end
   end
 end

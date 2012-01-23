@@ -44,8 +44,8 @@ module FogTracker
               sleep @delay
             end
           rescue Exception => e
-            @log.error "on account #{name}: #{e.message}"
-            @log.error e.backtrace.inspect
+            @log.error "Exception polling account #{name}: #{e.message}"
+            @log.error e.backtrace.join("\n")
             exit
           end
         end

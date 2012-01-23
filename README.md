@@ -54,15 +54,21 @@ How is it [done]? (Usage)
         :rackspace_username: XXXXXXXXX
       :polling_time: 180
 
-2) The tracker will run asynchronously, with one thread per account. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects in several ways:
+2) The tracker will run asynchronously, with one thread per account. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects using a filter-based query:
 
 	# get all Compute instances across all accounts and providers
-	tracker.get(:service => "Compute", :type => "server")
+	tracker.query("*::Compute::*::servers")
 
-	# get all Amazon Web Services Compute Instances across all accounts
-	tracker.get(:service => "Compute", :type => "server", :provider => "AWS")
-  
-  (You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated -- see docs for details).
+	# get all Amazon EC2 Resources, of all types, across all accounts
+	tracker["*::Compute::AWS::*"]	# the [] operator is the same as query()
+
+	# get all S3 objects in a given account
+	tracker["my production account::Storage::AWS::files"]
+
+  The query string format is:    "`account name::service::provider::collection`"
+
+  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated -- see the API docs for details.
+
 
 ----------------
 Who is it? (Contribution / Development)

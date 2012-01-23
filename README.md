@@ -8,7 +8,7 @@ Uses the Fog gem to track the state of cloud computing resources across multiple
 ----------------
 What is it?
 ----------------
-The Fog Tracker uses the [Fog gem](https://github.com/fog/fog) to periodically poll one or more cloud computing accounts, and to determine the state of their associated cloud computing "Resources": compute instances, disk volumes, stored objects, and so on. The most recent state of all Resources is saved in memory (as Fog objects), and can be queried repeatedly in ways similar to Fog, but with no network overhead.
+The Fog Tracker uses the [Fog gem](https://github.com/fog/fog) to periodically poll one or more cloud computing accounts, and determines the state of their associated cloud computing "Resources": compute instances, disk volumes, stored objects, and so on. The most recent state of all Resources is saved in memory (as Fog objects), and can be queried repeatedly in ways similar to Fog, but with no network overhead.
 
 
 ----------------

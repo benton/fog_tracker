@@ -57,12 +57,22 @@ module FogTracker
       @trackers[account_name].tracked_types
     end
 
-    # Returns an array of Resources based on the +query_string+
-    # Queries are like "Account Name::Compute::AWS::servers"
+    # Returns an array of Resources matching the +query_string+
+    #
+    # ==== Attributes
+    #
+    # * +query_string+ - a String used to filter the discovered Resources
+    #          it might look like: "Account Name::Compute::AWS::servers"
     def query(query_string)
-      Array.new
+      processor = FogTracker::Query::QueryProcessor.new(@trackers)
+      processor.execute(query_string)
     end
     alias :[] :query
+
+    # Returns this tracker's logger, for changing logging dynamically
+    def logger
+      @log
+    end
 
     private
 

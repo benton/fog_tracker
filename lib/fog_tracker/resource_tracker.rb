@@ -3,6 +3,8 @@ module FogTracker
   # Tracks a single Fog Resource type for a single Account
   class ResourceTracker
 
+    attr_accessor :collection
+
     # Creates an object for tracking a single Fog account
     #
     # ==== Attributes
@@ -15,6 +17,7 @@ module FogTracker
       @account          = account_tracker.account
       @account_name     = account_tracker.name
       @log              = account_tracker.log
+      @collection       = Array.new
       @log.debug "Created tracker for #{@type} on #{@account_name}."
     end
 

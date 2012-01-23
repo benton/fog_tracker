@@ -5,6 +5,7 @@ module FogTracker
     require 'fog'
 
     attr_reader :name, :account, :log, :delay
+    attr_reader :resource_trackers
 
     # Creates an object for tracking a single Fog account
     #
@@ -46,7 +47,7 @@ module FogTracker
           rescue Exception => e
             @log.error "Exception polling account #{name}: #{e.message}"
             @log.error e.backtrace.join("\n")
-            exit
+            exit 99
           end
         end
       else

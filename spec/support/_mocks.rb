@@ -1,3 +1,6 @@
+require 'fog'
+Fog.mock!
+
 FAKE_COLLECTION = 'servers'
 FAKE_ACCOUNT_NAME = 'Fake EC2 Account'
 FAKE_ACCOUNT = {
@@ -8,7 +11,20 @@ FAKE_ACCOUNT = {
     :aws_access_key_id => "fake user",
     :aws_secret_access_key => 'fake password'
   },
-  :exclude_resources => [:excluded_collection1, :excluded_collection2],
+  :exclude_resources => [
+    :spot_requests,
+    #:account,
+    #:flavors,
+    #:images,
+    #:addresses,
+    #:volumes,
+    #:snapshots,
+    #:tags,
+    #:servers,
+    #:security_groups,
+    #:key_pairs,
+    #:spot_instance_requests
+  ],
 }
 FAKE_ACCOUNTS = {FAKE_ACCOUNT_NAME => FAKE_ACCOUNT}
 
@@ -29,4 +45,10 @@ def mock_fog_connection
     [ 1, 2, 3 ]
   )
   fake_fog_connection
+end
+
+def mock_resource_tracker
+  fake_resource_tracker = double('mock_resource_tracker')
+  fake_resource_tracker.stub(:update)
+  fake_resource_tracker
 end

@@ -20,9 +20,9 @@ The Fog Tracker is intended to be a foundation library, on top of which more com
 ----------------
 Where is it? (Installation)
 ----------------
-Install the Fog Tracker gem from RubyGems
+Install the Fog Tracker gem (and its dependencies if necessary) from RubyGems
 
-    gem install fog_tracker
+    gem install fog_tracker [rake bundler]
 
 
 ----------------

@@ -18,7 +18,7 @@ module FogTracker
     # * +:callback+ - A Proc to call each time an account is polled.
     #     It should take the name of the account as its only required parameter
     # * +:logger+ - a Ruby Logger-compatible object
-    def initialize(accounts = {}, options={})
+    def initialize(accounts = {}, options = {})
       @accounts = accounts
       @delay    = options[:delay]
       @callback = options[:callback]

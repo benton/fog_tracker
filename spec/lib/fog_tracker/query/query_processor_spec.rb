@@ -10,10 +10,14 @@ module FogTracker
         @processor = QueryProcessor.new(fake_accounts)
       end
 
-      it "should define a Regular Expression for parsing queries" do
+      it "should define a Query Pattern for parsing queries" do
         QueryProcessor::QUERY_PATTERN.should_not == nil
-        QueryProcessor::QUERY_PATTERN.class.should == Regexp
+        QueryProcessor::QUERY_PATTERN.should be_an_instance_of(Regexp)
       end
+
+      #describe "#query" do
+      #
+      #end
 
     end
   end

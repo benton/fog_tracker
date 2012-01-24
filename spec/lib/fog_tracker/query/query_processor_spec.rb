@@ -5,9 +5,17 @@ module FogTracker
 
     describe QueryProcessor do
 
+      QUERIES = ['*::*::*::*', '.*production::*::*::*',
+        '*::Compute::*::*', '*::*::AWS::*', '*::*::*::servers']
+
       before(:each) do
         fake_accounts = {"fake account name " => {}}
-        @processor = QueryProcessor.new(fake_accounts)
+        tracker = AccountTracker.new(
+          FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
+        )
+        @processor = QueryProcessor.new(
+          {FAKE_ACCOUNT_NAME => tracker}, :logger => LOG
+        )
       end
 
       it "should define a Query Pattern for parsing queries" do
@@ -15,9 +23,15 @@ module FogTracker
         QueryProcessor::QUERY_PATTERN.should be_an_instance_of(Regexp)
       end
 
-      #describe "#query" do
-      #
-      #end
+      describe "#execute" do
+        context "with no discovered objects" do
+          it "should return an empty Array for any query" do
+            QUERIES.each do |query|
+              @processor.execute(query).should == []
+            end
+          end
+        end
+      end
 
     end
   end

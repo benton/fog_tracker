@@ -28,6 +28,8 @@ module FogTracker
         results = filter_by_collection(results, col_pattern)
       end
 
+      private
+
       # Returns an Array of 4 RegEx objeccts based on the +query_string+
       # for matching [account name, service, provider, collection]
       def parse_query(query_string)

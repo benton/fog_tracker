@@ -5,8 +5,9 @@ module FogTracker
     describe ResourceTracker do
 
       before(:each) do
+        @account_tracker = mock_account_tracker
         @tracker = ResourceTracker.new(
-          ::FAKE_COLLECTION, mock_account_tracker
+          FAKE_COLLECTION, @account_tracker
         )
       end
 
@@ -15,9 +16,9 @@ module FogTracker
       end
 
       describe '#update' do
-        it "refreshes its resource collection from its account" do
+        it "refreshes its resource collection from its AccountTracker" do
+          @account_tracker.connection.should_receive(FAKE_COLLECTION)
           @tracker.update
-          @tracker.collection.size.should be > 0
         end
       end
     end

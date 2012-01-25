@@ -5,6 +5,10 @@ module FogTracker
 
     describe QueryProcessor do
 
+      NUMBER_OF_ACCOUNTS    = 8
+      NUMBER_OF_COLLECTIONS = 5
+      RESOURCES_PER_ACCOUNT = 2
+
       QUERY['matching all Resources'] = '*::*::*::*'
       QUERY['by account name']        = '.*production::*::*::*'
       QUERY['by Fog Service']         = '*::Compute::*::*'
@@ -30,15 +34,11 @@ module FogTracker
 
         context "with a pre-populated, diverse set of Resources" do
           before(:each) do
-            NUMBER_OF_ACCOUNTS    = 8
-            NUMBER_OF_COLLECTIONS = 5
-            RESOURCES_PER_ACCOUNT = 2
             account_trackers =
               (1..NUMBER_OF_ACCOUNTS).inject({}) do |t, account_index|
                 t["Fake Account #{account_index}"] = mock_account_tracker(
                   NUMBER_OF_COLLECTIONS, RESOURCES_PER_ACCOUNT
-                )
-                t
+                ) ; t
               end
             @processor = QueryProcessor.new(account_trackers, :logger => LOG)
           end

@@ -28,6 +28,9 @@ module FogTracker
     ],
   }
   FAKE_ACCOUNTS = {FAKE_ACCOUNT_NAME => FAKE_ACCOUNT}
+  module Query
+    QUERY = {}  # Used in query_processor_spec.rb
+  end
 end
 
 def mock_account_tracker
@@ -44,7 +47,7 @@ def mock_fog_connection
   fake_fog_connection
 end
 
-def self.mock_resource_tracker
+def mock_resource_tracker
   fake_resource_tracker = double('mock_resource_tracker')
   fake_resource_tracker.stub(:update)
   fake_resource_tracker

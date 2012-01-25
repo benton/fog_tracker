@@ -5,15 +5,15 @@ module FogTracker
 
     describe QueryProcessor do
 
-      QUERIES = ['*::*::*::*', '.*production::*::*::*',
-        '*::Compute::*::*', '*::*::AWS::*', '*::*::*::servers']
+      QUERY['matching all Resources'] = '*::*::*::*'
+      QUERY['by account name']        = '.*production::*::*::*'
+      QUERY['by Fog Service']         = '*::Compute::*::*'
+      QUERY['by Fog Provider']        = '*::*::AWS::*'
+      QUERY['by Fog collection name'] = '*::*::*::servers'
 
       before(:each) do
-        fake_accounts = {"fake account name " => {}}
-        tracker = AccountTracker.new(
-          FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
-        )
         @processor = QueryProcessor.new(
+          AccountTracker.new(FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG),
           {FAKE_ACCOUNT_NAME => tracker}, :logger => LOG
         )
       end
@@ -24,10 +24,18 @@ module FogTracker
       end
 
       describe "#execute" do
-        context "with no discovered objects" do
-          it "should return an empty Array for any query" do
-            QUERIES.each do |query|
+        context "with no discovered Resources" do
+          QUERY.each do |name, query|
+            it "should return an empty Array for a query #{name}" do
               @processor.execute(query).should == []
+            end
+          end
+        end
+
+        context "with a pre-populated, diverse set of Resources" do
+          context "when running the query matching all Resources" do
+            it "should return all Resources" do
+              @processor.execute(QUERY['matching all Resources']).should == []
             end
           end
         end

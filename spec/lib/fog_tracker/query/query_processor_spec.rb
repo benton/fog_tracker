@@ -5,15 +5,11 @@ module FogTracker
 
     describe QueryProcessor do
 
-      NUMBER_OF_ACCOUNTS    = 8
-      NUMBER_OF_COLLECTIONS = 5
-      RESOURCES_PER_ACCOUNT = 2
-
       QUERY['matching all Resources'] = '*::*::*::*'
       QUERY['by account name']        = 'Fake Account \d+::*::*::*'
       QUERY['by Fog Service']         = '*::FakeService::*::*'
       QUERY['by Fog Provider']        = '*::*::FakeProvider::*'
-      QUERY['by Fog collection name'] = '*::*::*::Fake_Collection_Type5'
+      QUERY['by Fog collection name'] = '*::*::*::Fake_Collection_Type1'
 
 
       it "should define a Query Pattern for parsing queries" do
@@ -34,7 +30,10 @@ module FogTracker
         end
 
         context "with a pre-populated, diverse set of Resources" do
-          # Try each of the QUERY entries above against a prepopulated set
+          # Create a prepopulated QueryProcessor
+          NUMBER_OF_ACCOUNTS    = 8
+          RESOURCES_PER_ACCOUNT = 2
+          NUMBER_OF_COLLECTIONS = [5, NUMBER_OF_FAKE_RESOURCE_TYPES].min
           before(:each) do
             account_trackers =
               (1..NUMBER_OF_ACCOUNTS).inject({}) do |t, account_index|
@@ -44,7 +43,7 @@ module FogTracker
               end
             @processor = QueryProcessor.new(account_trackers, :logger => LOG)
           end
-
+          # Run the above QUERY entries against the prepopulated set
           context "when running the query matching all Resources" do
             it "should return all Resources" do
               @processor.execute(QUERY['matching all Resources']).size.should ==
@@ -82,9 +81,7 @@ module FogTracker
           end
 
         end
-
       end
-
     end
   end
 end

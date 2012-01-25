@@ -10,10 +10,10 @@ module FogTracker
       RESOURCES_PER_ACCOUNT = 2
 
       QUERY['matching all Resources'] = '*::*::*::*'
-      QUERY['by account name']        = '.*production::*::*::*'
-      QUERY['by Fog Service']         = '*::Compute::*::*'
-      QUERY['by Fog Provider']        = '*::*::AWS::*'
-      QUERY['by Fog collection name'] = '*::*::*::servers'
+      QUERY['by account name']        = 'Fake Account \d+::*::*::*'
+      QUERY['by Fog Service']         = '*::FakeService::*::*'
+      QUERY['by Fog Provider']        = '*::*::FakeProvider::*'
+      QUERY['by Fog collection name'] = '*::*::*::Fake_Collection_Type5'
 
 
       it "should define a Query Pattern for parsing queries" do
@@ -23,6 +23,7 @@ module FogTracker
 
       describe "#execute" do
         context "with no discovered Resources" do
+          # Try each of the QUERY entries above against an empty set
           QUERY.each do |name, query|
             it "should return an empty Array for a query #{name}" do
               QueryProcessor.new(
@@ -33,6 +34,7 @@ module FogTracker
         end
 
         context "with a pre-populated, diverse set of Resources" do
+          # Try each of the QUERY entries above against a prepopulated set
           before(:each) do
             account_trackers =
               (1..NUMBER_OF_ACCOUNTS).inject({}) do |t, account_index|
@@ -47,6 +49,35 @@ module FogTracker
             it "should return all Resources" do
               @processor.execute(QUERY['matching all Resources']).size.should ==
                 NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+            end
+          end
+          context "when running a query by account name" do
+            it "should return all Resources for that account only" do
+              @processor.execute(QUERY['by account name']).size.should ==
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+              @processor.execute('wrong account::*::*::*').size.should == 0
+            end
+          end
+          context "when running a query by Fog service name" do
+            it "should return all Resources for that service only" do
+              @processor.execute(QUERY['by Fog Service']).size.should ==
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+              @processor.execute('*::wrong service::*::*').size.should == 0
+            end
+          end
+          context "when running a query by Fog provider name" do
+            it "should return all Resources for that provider only" do
+              @processor.execute(QUERY['by Fog Provider']).size.should ==
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+                @processor.execute('*::*::wrong provider::*').size.should == 0
+            end
+          end
+          context "when running a query by Fog collection name" do
+            it "should return all Resources for that collection only" do
+              @processor.execute(QUERY['by Fog collection name']).size.should ==
+                NUMBER_OF_ACCOUNTS * RESOURCES_PER_ACCOUNT
+              @processor.execute('*::*::*::wrong collection').size.should == 0
+              true
             end
           end
 

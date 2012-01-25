@@ -30,15 +30,19 @@ module FogTracker
 
         context "with a pre-populated, diverse set of Resources" do
           before(:each) do
-            @processor = QueryProcessor.new(
-              {FAKE_ACCOUNT_NAME => mock_account_tracker(3)}, :logger => LOG
+            NUMBER_OF_COLLECTIONS = 5
+            RESOURCES_PER_ACCOUNT = 2
+            @processor = QueryProcessor.new({
+              FAKE_ACCOUNT_NAME => mock_account_tracker(
+                  NUMBER_OF_COLLECTIONS, RESOURCES_PER_ACCOUNT
+                )}, :logger => LOG
             )
           end
 
           context "when running the query matching all Resources" do
             it "should return all Resources" do
-              @processor.execute(QUERY['matching all Resources']).should_not == []
-              @processor.execute(QUERY['matching all Resources']).size.should == 9
+              @processor.execute(QUERY['matching all Resources']).size.should ==
+                NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
             end
           end
 

@@ -1,6 +1,7 @@
 require 'fog'
 Fog.mock!
 
+# Establish some constants
 module FogTracker
   FAKE_COLLECTION = 'servers'
   FAKE_ACCOUNT_NAME = 'Fake EC2 Account'
@@ -33,48 +34,37 @@ module FogTracker
   end
 end
 
-# Some Mock Fog Resource and Collection Classes
+# Create some fake Fog Resource and Collection Classes
+NUMBER_OF_FAKE_RESOURCE_TYPES = 30
 module Fog
   module FakeService
     module FakeProvider
-      class FakeCollectionType1 ; end
-      class FakeResourceType1
-        def collection ; FakeCollectionType1.new end
-      end
-      class FakeCollectionType2 ; end
-      class FakeResourceType2
-        def collection ; FakeCollectionType2.new end
-      end
-      class FakeCollectionType3 ; end
-      class FakeResourceType3
-        def collection ; FakeCollectionType3.new end
+      (1..NUMBER_OF_FAKE_RESOURCE_TYPES).each do |class_index|
+        eval(%Q{
+            class FakeCollectionType#{class_index} ; end
+            class FakeResourceType#{class_index}
+              def collection ; FakeCollectionType#{class_index}.new end
+            end
+          })
       end
     end
   end
 end
 
-def mock_account_tracker(number_of_resources_per_collection = 0)
+def mock_account_tracker(num_collections = 1, resources_per_collection = 0)
   fake_account_tracker = double('mock_account_tracker')
   fake_account_tracker.stub(:account).and_return(Hash.new)
   fake_account_tracker.stub(:name).and_return("fake account tracker")
   fake_account_tracker.stub(:log).and_return(LOG)
   fake_account_tracker.stub(:connection).and_return(mock_fog_connection)
-  fake_account_tracker.stub(:resource_trackers).and_return(
-    [
-      mock_resource_tracker(
-        Fog::FakeService::FakeProvider::FakeResourceType1,
-        number_of_resources_per_collection
-      ),
-      mock_resource_tracker(
-        Fog::FakeService::FakeProvider::FakeResourceType2,
-        number_of_resources_per_collection
-      ),
-      mock_resource_tracker(
-        Fog::FakeService::FakeProvider::FakeResourceType3,
-        number_of_resources_per_collection
-      ),
-    ]
-  )
+  # create an array of mock ResourceTrackers
+  trackers = (1..num_collections).map do |class_index|
+    mock_resource_tracker(
+      Fog::FakeService::FakeProvider.const_get("FakeResourceType#{class_index}"), 
+      resources_per_collection
+    )
+  end
+  fake_account_tracker.stub(:resource_trackers).and_return(trackers)
   fake_account_tracker
 end
 

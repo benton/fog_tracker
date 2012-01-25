@@ -73,7 +73,9 @@ How is it [done]? (Usage)
 ----------------
 Who is it? (Contribution / Development)
 ----------------
-This Gem was created by Benton Roberts _(benton@bentonroberts.com)_ The project is still in its early stages, and needs to be tested with many more of Fog's cloud providers. Helping hands are appreciated!
+This Gem was created by Benton Roberts _(benton@bentonroberts.com)_, but draws heavily on the work of the [Fog project](http://fog.io/). Thanks to geemus, and to all Fog contributors.
+
+The project is still in its early stages, and needs to be tested with many more of Fog's cloud providers. Helping hands are appreciated!
 
 1) Install project dependencies.
 

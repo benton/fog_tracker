@@ -13,8 +13,9 @@ module FogTracker
 
       before(:each) do
         @processor = QueryProcessor.new(
-          AccountTracker.new(FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG),
-          {FAKE_ACCOUNT_NAME => tracker}, :logger => LOG
+          {FAKE_ACCOUNT_NAME =>
+            AccountTracker.new(FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG)},
+          :logger => LOG
         )
       end
 

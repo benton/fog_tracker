@@ -2,13 +2,13 @@ Fog Tracker
 ================
 Uses the Fog gem to track the state of cloud computing resources across multiple accounts, with multiple service providers.
 
-  *ALPHA VERSION - not yet fully functional*
+  *BETA VERSION - needs functional testing with more cloud computing providers*
 
 
 ----------------
 What is it?
 ----------------
-The Fog Tracker uses the [Fog gem](https://github.com/fog/fog) to periodically poll one or more cloud computing accounts, and determines the state of their associated cloud computing "Resources": compute instances, disk volumes, stored objects, and so on. The most recent state of all Resources is saved in memory (as Fog objects), and can be queried repeatedly in ways similar to Fog, but with no network overhead.
+The Fog Tracker uses the [Fog gem](https://github.com/fog/fog) to periodically poll one or more cloud computing accounts, and determines the state of their associated cloud computing "Resources": compute instances, disk volumes, stored objects, and so on. The most recent state of all Resources is saved in memory (as Fog objects), and can be accessed repeatedly with no network overhead, using a simple, Regular-Expression-based query.
 
 
 ----------------
@@ -73,7 +73,7 @@ How is it [done]? (Usage)
 ----------------
 Who is it? (Contribution / Development)
 ----------------
-This project is still in its early stages, and needs to be tested with many more of Fog's cloud providers. Helping hands are appreciated!
+This Gem was created by Benton Roberts _(benton@bentonroberts.com)_ The project is still in its early stages, and needs to be tested with many more of Fog's cloud providers. Helping hands are appreciated!
 
 1) Install project dependencies.
 

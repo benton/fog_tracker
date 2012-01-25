@@ -9,7 +9,7 @@ module FogTracker
       QUERY['by account name']        = 'Fake Account \d+::*::*::*'
       QUERY['by Fog Service']         = '*::FakeService::*::*'
       QUERY['by Fog Provider']        = '*::*::FakeProvider::*'
-      QUERY['by Fog collection name'] = '*::*::*::Fake_Collection_Type1'
+      QUERY['by Fog collection name'] = '*::*::*::fake_collection_type1'
 
 
       it "should define a Query Pattern for parsing queries" do

@@ -1,6 +1,6 @@
 module FogTracker
 
-  # Tracks one or more Fog accounts in an ActiveRecord database
+  # Tracks one or more Fog accounts and exposes a query() on the results
   class Tracker
 
     attr_accessor :accounts

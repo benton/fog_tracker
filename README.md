@@ -28,11 +28,10 @@ Install the Fog Tracker gem (and its dependencies if necessary) from RubyGems
 ----------------
 How is it [done]? (Usage)
 ----------------
-1) Just require the gem, and create a `FogTracker::Tracker`. Pass it some account information in a hash, perhaps loaded from a YAML file:
+1) Require the gem, and create a `FogTracker::Tracker`. Pass it some account information in a hash, perhaps loaded from a YAML file:
 
     require 'fog_tracker'
     tracker = FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'))
-    tracker.start
 
   Here are the contents of a sample `accounts.yml`:
 
@@ -54,7 +53,11 @@ How is it [done]? (Usage)
         :rackspace_username: XXXXXXXXX
       :polling_time: 180
 
-2) The tracker will run asynchronously, with one thread per account. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects using a filter-based query:
+2) Call `start` on the Tracker. It will run asynchronously, with one thread per account. At any time, you can call `start` or `stop` on it, and query the resulting collections of Fog Resource objects.
+
+    tracker.start
+
+3) Access the Fog object collections by calling `Tracker::query`, and passing it a filter-based query String. The query string format is: `account_name::service::provider::collection`
 
     # get all Compute instances across all accounts and providers
     tracker.query("*::Compute::*::servers")
@@ -65,13 +68,18 @@ How is it [done]? (Usage)
     # get all S3 objects in a given account
     tracker["my production account::Storage::AWS::files"]
 
-  The query string format is:    "`account name::service::provider::collection`"
-
   If you're tired of calling `each` on the results of every query, pass a single-argument block, and it will be invoked once with each resulting resource:
 
     t.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
-  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated -- see the API docs for details.
+  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated:
+
+    tracker = Tracker.new(YAML::load(File.read 'accounts.yml'),
+      :callback => Proc.new do |account_name|
+        puts "Updated account #{account_name}"
+        puts " Got #{tracker["#{account_name}::*::*::*"].count} resources"
+      end
+    )
 
 
 ----------------

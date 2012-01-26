@@ -22,10 +22,11 @@ module FogTracker
       # Returns an Array of Resources, filtered by +query+
       def execute(query)
         acct_pattern, svc_pattern, prov_pattern, col_pattern = parse_query(query)
-        results_by_account = get_results_by_account(acct_pattern)
-        results = filter_by_service(results_by_account, svc_pattern)
-        results = filter_by_provider(results, prov_pattern)
-        results = filter_by_collection(results, col_pattern)
+        filter_by_collection(
+          filter_by_provider(
+            filter_by_service(get_results_by_account(acct_pattern), svc_pattern),
+            prov_pattern),
+          col_pattern)
       end
 
       private

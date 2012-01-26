@@ -70,16 +70,16 @@ How is it [done]? (Usage)
 
   If you're tired of calling `each` on the results of every query, pass a single-argument block, and it will be invoked once with each resulting resource:
 
-    t.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
+    tracker.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
   You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated:
 
-    tracker = Tracker.new(YAML::load(File.read 'accounts.yml'),
+    FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'),
       :callback => Proc.new do |account_name|
         puts "Updated account #{account_name}"
         puts " Got #{tracker["#{account_name}::*::*::*"].count} resources"
       end
-    )
+    ).start
 
 
 ----------------

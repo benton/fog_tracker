@@ -1,11 +1,11 @@
 module FogTracker
 
-  # Tracks a single Fog Resource type for a single Account
+  # Tracks a single Fog collection in a single account
   class ResourceTracker
 
     attr_accessor :collection
 
-    # Creates an object for tracking a single Fog account
+    # Creates an object for tracking a single Fog collection in a single account
     #
     # ==== Attributes
     #

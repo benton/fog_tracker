@@ -1,13 +1,13 @@
 module FogTracker
 
-  # Tracks a single Fog account in an ActiveRecord database
+  # Tracks all collections in a single Fog account
   class AccountTracker
     require 'fog'
 
     attr_reader :name, :account, :log, :delay
     attr_reader :resource_trackers
 
-    # Creates an object for tracking a single Fog account
+    # Creates an object for tracking all collections in a single Fog account
     #
     # ==== Attributes
     #

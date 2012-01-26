@@ -34,5 +34,25 @@ module FogTracker
       end
     end
 
+    # A class for testing the Tracker's callbacks
+    class CallbackReceiver
+      def resource_callback(resource)
+        LOG.warn "Found #{resource.class} #{resource.identity}"
+      end
+    end
+
+    describe '#query' do
+      it "invokes any passed code block once per resulting Resource" do
+        pending "debugging of RSpec should_receive Expectation issue"
+        @tracker.start
+        sleep THREAD_STARTUP_DELAY
+        receiver = CallbackReceiver.new
+        @tracker.query('*::*::*::*') {|r| receiver.resource_callback(r) }
+        # TODO: debug this RSpec testing problem
+        # At this point the callbacks have occurred - so...
+        receiver.should_receive(:resource_callback) # why doesn't this work?
+      end
+    end
+
   end
 end

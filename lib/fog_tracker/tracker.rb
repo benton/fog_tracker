@@ -58,15 +58,18 @@ module FogTracker
     end
 
     # Returns an array of Resources matching the +query_string+
+    # Calls any block passed for each resulting resource
     #
     # ==== Attributes
     #
     # * +query_string+ - a String used to filter the discovered Resources
     #          it might look like: "Account Name::Compute::AWS::servers"
     def query(query_string)
-      FogTracker::Query::QueryProcessor.new(
+      results = FogTracker::Query::QueryProcessor.new(
         @trackers, :logger => @log
       ).execute(query_string)
+      (results.each {|r| yield r}) if block_given?
+      results
     end
     alias :[] :query
 

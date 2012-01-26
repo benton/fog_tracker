@@ -56,16 +56,20 @@ How is it [done]? (Usage)
 
 2) The tracker will run asynchronously, with one thread per account. You can call `start()` and `stop()` on it, and query the resulting collections of Fog Resource objects using a filter-based query:
 
-	# get all Compute instances across all accounts and providers
-	tracker.query("*::Compute::*::servers")
+    # get all Compute instances across all accounts and providers
+    tracker.query("*::Compute::*::servers")
 
-	# get all Amazon EC2 Resources, of all types, across all accounts
-	tracker["*::Compute::AWS::*"]	# the [] operator is the same as query()
+    # get all Amazon EC2 Resources, of all types, across all accounts
+    tracker["*::Compute::AWS::*"]	# the [] operator is the same as query()
 
-	# get all S3 objects in a given account
-	tracker["my production account::Storage::AWS::files"]
+    # get all S3 objects in a given account
+    tracker["my production account::Storage::AWS::files"]
 
   The query string format is:    "`account name::service::provider::collection`"
+
+  If you're tired of calling `each` on the results of every query, pass a single-argument block, and it will be invoked once with each resulting resource:
+
+    t.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
   You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated -- see the API docs for details.
 

@@ -71,7 +71,7 @@ How is it [done]? (Usage)
 
 
 ----------------
-Who is it? (Contribution / Development)
+Who is it? (Contribution)
 ----------------
 This Gem was created by Benton Roberts _(benton@bentonroberts.com)_, but draws heavily on the work of the [Fog project](http://fog.io/). Thanks to geemus, and to all Fog contributors.
 

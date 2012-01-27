@@ -41,7 +41,11 @@ module FogTracker
             while true do
               @log.info "Polling account #{@name}..."
               @resource_trackers.each {|tracker| tracker.update}
-              @callback.call @name if @callback
+              @callback.call(
+                (@resource_trackers.collect do |tracker|
+                  tracker.collection
+                end).flatten
+              ) if @callback
               sleep @delay
             end
           rescue Exception => e

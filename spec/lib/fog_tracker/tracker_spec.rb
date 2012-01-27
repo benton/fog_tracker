@@ -51,7 +51,7 @@ module FogTracker
         receiver = double "account callback object"
         receiver.stub(:callback)
         tracker = Tracker.new(ACCOUNTS, :logger => LOG,
-          :callback => Proc.new {|account_name| receiver.callback(account_name)}
+          :callback => Proc.new {|resources| receiver.callback(resources)}
         )
         receiver.should_receive(:callback).exactly(ACCOUNTS.size).times
         tracker.start

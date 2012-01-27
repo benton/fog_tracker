@@ -72,14 +72,16 @@ How is it [done]? (Usage)
 
     tracker.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
-  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated:
+  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated. It should accept a list of the updated Resources as its first argument:
 
     FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'),
-      :callback => Proc.new do |account_name|
-        puts "Updated account #{account_name}"
-        puts " Got #{tracker["#{account_name}::*::*::*"].count} resources"
+      :callback => Proc.new do |resources|
+      	puts "Got #{resources.count} resources from account "+
+		      resources.first.tracker_account[:name]
       end
     ).start
+
+  The appropriate account information for each Fog resource, read from `accounts.yml` can be obtained by calling its `tracker_account` method.
 
 
 ----------------

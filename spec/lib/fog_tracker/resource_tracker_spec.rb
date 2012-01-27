@@ -5,7 +5,9 @@ module FogTracker
     describe ResourceTracker do
 
       before(:each) do
-        @account_tracker = mock_account_tracker
+        @account_tracker = AccountTracker.new(
+          FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
+        )
         @tracker = ResourceTracker.new(
           FAKE_COLLECTION, @account_tracker
         )

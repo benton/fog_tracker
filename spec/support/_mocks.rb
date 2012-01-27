@@ -74,12 +74,6 @@ def mock_fog_connection
   fake_fog_connection
 end
 
-def mock_resource_tracker
-  fake_resource_tracker = double('mock_resource_tracker')
-  fake_resource_tracker.stub(:update)
-  fake_resource_tracker
-end
-
 def mock_fog_resource(resource_class)
   fake_resource = resource_class.new
   fake_collection_class =

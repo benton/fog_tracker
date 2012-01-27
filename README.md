@@ -14,15 +14,15 @@ The Fog Tracker uses the [Fog gem](https://github.com/fog/fog) to periodically p
 ----------------
 Why is it?
 ----------------
-The Fog Tracker is intended to be a foundation library, on top of which more complex cloud dashboard or management applications can be built. It allows such applications to decouple their requests to cloud service providers from their access to the results of those requests.
+The Fog Tracker is intended to be a foundation library, on top of which more complex cloud dashboard or management applications can be built. It is a polling and query layer, allowing such applications to decouple their (read-only) requests to cloud service providers from access to the results of those requests.
 
 
 ----------------
 Where is it? (Installation)
 ----------------
-Install the Fog Tracker gem (and its dependencies if necessary) from RubyGems
+Install the Fog Tracker gem and its dependencies from RubyGems:
 
-    gem install fog_tracker [rake bundler]
+    gem install fog_tracker
 
 
 ----------------
@@ -57,7 +57,7 @@ How is it [done]? (Usage)
 
     tracker.start
 
-3) Access the Fog object collections by calling `Tracker::query`, and passing it a filter-based query String. The query string format is: `account_name::service::provider::collection`
+3) Access the Fog object collections by passing a filter-based query String to `Tracker::query`. The query string format is: `account_name::service::provider::collection`
 
     # get all Compute instances across all accounts and providers
     tracker.query("*::Compute::*::servers")
@@ -68,11 +68,14 @@ How is it [done]? (Usage)
     # get all S3 objects in a given account
     tracker["my production account::Storage::AWS::files"]
 
-  If you're tired of calling `each` on the results of every query, pass a single-argument block, and it will be invoked once with each resulting resource:
+  ----------------
+  *Usage Tips*
+
+  Instead of calling `each` on the results of every query, you can pass a single-argument block, and it will be invoked once with each resulting resource:
 
     tracker.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
-  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated. It should accept a list of the updated Resources as its first argument:
+  You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated. It should accept an Array containing the updated Resources as its first argument:
 
     FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'),
       :callback => Proc.new do |resources|
@@ -81,7 +84,9 @@ How is it [done]? (Usage)
       end
     ).start
 
-  The appropriate account information for each Fog resource, read from `accounts.yml` can be obtained by calling its `tracker_account` method.
+  To get a Resource's Hash of account information, call its `tracker_account` method _(credentials are removed)_.
+
+Any Exceptions that occur in the Tracker's polling threads are rescued and logged. If you want to take further action, you can initialize the Tracker with an `:error_callback` Proc, similar to the Account update `:callback` -- except that the `:error_callback` should accept an Exception instead of an Array of Resources.
 
 
 ----------------

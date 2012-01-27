@@ -41,11 +41,7 @@ module FogTracker
             while true do
               @log.info "Polling account #{@name}..."
               @resource_trackers.each {|tracker| tracker.update}
-              @callback.call(
-                (@resource_trackers.collect do |tracker|
-                  tracker.collection
-                end).flatten
-              ) if @callback
+              @callback.call(all_resources) if @callback
               sleep @delay
             end
           rescue Exception => e
@@ -84,6 +80,13 @@ module FogTracker
     def tracked_types
       types = connection.collections - (account[:exclude_resources] || [])
       types.map {|type| type.to_s}
+    end
+
+    # Returns an Array of all this Account's currently tracked Resources
+    def all_resources
+      (@resource_trackers.collect do |tracker|
+        tracker.collection
+      end).flatten
     end
 
     private

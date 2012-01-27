@@ -60,6 +60,7 @@ def mock_account_tracker(num_collections = 1, resources_per_collection = 0)
   fake_account_tracker.stub(:account).and_return(Hash.new)
   fake_account_tracker.stub(:name).and_return(FogTracker::FAKE_ACCOUNT_NAME)
   fake_account_tracker.stub(:log).and_return(LOG)
+  fake_account_tracker.stub(:all_resources).and_return(Array.new)
   fake_account_tracker.stub(:connection).and_return(mock_fog_connection)
   # create an array of mock ResourceTrackers
   trackers = (1..num_collections).map do |class_index|

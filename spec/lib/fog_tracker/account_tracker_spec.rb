@@ -34,6 +34,17 @@ module FogTracker
           @tracker.start
           sleep THREAD_STARTUP_DELAY # wait for background thread to start
         end
+        it "invokes its callback Proc when its account is updated" do
+          receiver = double "account callback object"
+          receiver.stub(:callback)
+          tracker = AccountTracker.new(
+            FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG,
+            :callback => Proc.new {|resources| receiver.callback(resources)}
+          )
+          receiver.should_receive(:callback).exactly(ACCOUNTS.size).times
+          tracker.start
+          sleep THREAD_STARTUP_DELAY
+        end
       end
 
       describe '#stop' do

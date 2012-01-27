@@ -31,10 +31,20 @@ module FogTracker
       # Here's where most of the network overhead is actually incurred
       fog_collection.each do |resource|
         @log.debug "Fetching resource: #{resource.class} #{resource.identity}"
+        resource.fog_collection_tracker = self
         new_collection << resource
         @log.debug "Got resource: #{resource.inspect}"
       end
       @collection = new_collection
+    end
+
+    # Returns a Hash of account information as resource.tracker_account
+    # a :name parameter is added, and the :credentials are removed
+    def clean_account_data
+      @clean_data ||= @account  # generate this data only once per res
+      @clean_data[:name] = @account_name
+      @clean_data[:credentials] = Hash.new
+      @clean_data
     end
 
   end

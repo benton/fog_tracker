@@ -32,6 +32,10 @@ module FogTracker
   module Query
     QUERY = {}  # Used in query_processor_spec.rb
   end
+  class MockFogResource < Fog::Model
+    #attr_accessor :tracker_account
+    def identity ; "random-resource-id-#{rand 65536}" end
+  end
 end
 
 # Create some fake Fog Resource and Collection Classes
@@ -54,7 +58,7 @@ end
 def mock_account_tracker(num_collections = 1, resources_per_collection = 0)
   fake_account_tracker = double('mock_account_tracker')
   fake_account_tracker.stub(:account).and_return(Hash.new)
-  fake_account_tracker.stub(:name).and_return("fake account tracker")
+  fake_account_tracker.stub(:name).and_return(FogTracker::FAKE_ACCOUNT_NAME)
   fake_account_tracker.stub(:log).and_return(LOG)
   fake_account_tracker.stub(:connection).and_return(mock_fog_connection)
   # create an array of mock ResourceTrackers
@@ -70,17 +74,10 @@ end
 
 def mock_fog_connection
   fake_fog_connection = double('mock_fog_connection')
-  fake_fog_connection.stub(FogTracker::FAKE_COLLECTION).and_return([ 1, 2, 3 ])
-  fake_fog_connection
-end
-
-def mock_fog_resource(resource_class)
-  fake_resource = resource_class.new
-  fake_collection_class =
-  fake_resource.stub(:collection).and_return(
-    collection_class.new
+  fake_fog_connection.stub(FogTracker::FAKE_COLLECTION).and_return(
+    [ FogTracker::MockFogResource.new, FogTracker::MockFogResource.new ]
   )
-  fake_resource
+  fake_fog_connection
 end
 
 def mock_resource_tracker(resource_class, number_of_resources = 0)

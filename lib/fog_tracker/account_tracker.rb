@@ -20,6 +20,8 @@ module FogTracker
     # * +:delay+ - Default time between polling of accounts
     # * +:callback+ - A Method or Proc to call each time an account is polled.
     #     It should take the name of the account as its only required parameter
+    # * +:error_callback+ - A Proc to call if polling errors occur.
+    #     It should take a single Exception as its only required parameter
     # * +:logger+ - a Ruby Logger-compatible object
     def initialize(account_name, account, options={})
       @name     = account_name
@@ -28,6 +30,7 @@ module FogTracker
       @log      = options[:logger] || FogTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
                               FogTracker::DEFAULT_POLLING_TIME
+      @error_proc = options[:error_callback]
       @log.debug "Creating tracker for account #{@name}."
       create_resource_trackers
     end
@@ -46,8 +49,10 @@ module FogTracker
             end
           rescue Exception => e
             @log.error "Exception polling account #{name}: #{e.message}"
-            @log.error e.backtrace.join("\n")
-            exit 99
+            e.backtrace.each {|line| @log.debug line}
+            @error_proc.call(e) if @error_proc
+            sleep @delay
+            retry
           end
         end
       else

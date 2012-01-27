@@ -17,12 +17,15 @@ module FogTracker
     # * +:delay+ - Time between polling of accounts. Overrides per-account value
     # * +:callback+ - A Proc to call each time an account is polled.
     #     It should take the name of the account as its only required parameter
+    # * +:error_callback+ - A Proc to call if polling errors occur.
+    #     It should take a single Exception as its only required parameter
     # * +:logger+ - a Ruby Logger-compatible object
     def initialize(accounts = {}, options = {})
       @accounts = accounts
       @delay    = options[:delay]
       @callback = options[:callback]
       @log      = options[:logger] || FogTracker.default_logger
+      @error_proc = options[:error_callback]
       # Create a Hash that maps account names to AccountTrackers
       create_trackers
     end
@@ -86,7 +89,8 @@ module FogTracker
       @accounts.each do |name, account|
         @log.debug "Setting up tracker for account #{name}"
         @trackers[name] = AccountTracker.new(name, account,
-        {:delay => @delay, :callback => @callback, :logger => @log})
+        {:delay => @delay, :callback => @callback, 
+          :error_callback => @error_proc, :logger => @log})
       end
     end
 

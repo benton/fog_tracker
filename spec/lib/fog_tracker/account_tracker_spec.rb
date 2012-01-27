@@ -26,6 +26,24 @@ module FogTracker
         @tracker.resource_trackers.size.should be > 0
       end
 
+      context "when it encounters an Exception while updating" do
+        context "when initialized with an error callback" do
+          it "should fire the callback" do
+            ResourceTracker.any_instance.stub(:update).and_raise
+            receiver = double "error callback object"
+            receiver.stub(:callback)
+            tracker = AccountTracker.new(
+              FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, {
+                :error_callback => Proc.new {|err| receiver.callback(err)}
+              }
+            )
+            receiver.should_receive(:callback).exactly(:once)
+            tracker.start
+            sleep THREAD_STARTUP_DELAY
+          end
+        end
+      end
+
       describe '#start' do
         it "sends update() to its ResourceTrackers" do
           @tracker.resource_trackers.each do |resource_tracker|
@@ -41,7 +59,7 @@ module FogTracker
             FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG,
             :callback => Proc.new {|resources| receiver.callback(resources)}
           )
-          receiver.should_receive(:callback).exactly(ACCOUNTS.size).times
+          receiver.should_receive(:callback).exactly(FAKE_ACCOUNTS.size).times
           tracker.start
           sleep THREAD_STARTUP_DELAY
         end

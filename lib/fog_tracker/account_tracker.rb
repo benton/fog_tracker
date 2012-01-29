@@ -18,7 +18,7 @@ module FogTracker
     # @param [Hash] options optional additional parameters:
     #  - :delay (Integer) - Default time between polling of accounts
     #  - :callback (Proc) - A Method or Proc to call each time an account is polled.
-    #    (should take the name of the account as its only required parameter)
+    #    (should take an Array of resources as its only required parameter)
     #  - :error_callback (Proc) - A Method or Proc to call if polling errors occur.
     #    (should take a single Exception as its only required parameter)
     #  - :logger - a Ruby Logger-compatible object

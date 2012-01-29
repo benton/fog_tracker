@@ -24,10 +24,8 @@ module FogTracker
           @tracker.update
         end
         it "attaches account information to all resources" do
-          account_tracker = mock_account_tracker(5,5)
-          tracker = CollectionTracker.new(FAKE_COLLECTION, account_tracker)
-          tracker.update
-          tracker.collection.each do |resource|
+          @tracker.update
+          @tracker.collection.each do |resource|
             resource.tracker_account[:name].should == FAKE_ACCOUNT_NAME
             resource.tracker_account[:credentials].should == {}
           end

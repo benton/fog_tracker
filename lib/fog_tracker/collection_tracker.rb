@@ -1,7 +1,7 @@
 module FogTracker
 
   # Tracks a single Fog collection in a single account
-  class ResourceTracker
+  class CollectionTracker
 
     attr_accessor :collection
 

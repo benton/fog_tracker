@@ -62,14 +62,14 @@ def mock_account_tracker(num_collections = 1, resources_per_collection = 0)
   fake_account_tracker.stub(:log).and_return(LOG)
   fake_account_tracker.stub(:all_resources).and_return(Array.new)
   fake_account_tracker.stub(:connection).and_return(mock_fog_connection)
-  # create an array of mock ResourceTrackers
+  # create an array of mock CollectionTrackers
   trackers = (1..num_collections).map do |class_index|
-    mock_resource_tracker(
+    mock_collection_tracker(
       Fog::FakeService::FakeProvider.const_get("FakeResourceType#{class_index}"), 
       resources_per_collection
     )
   end
-  fake_account_tracker.stub(:resource_trackers).and_return(trackers)
+  fake_account_tracker.stub(:collection_trackers).and_return(trackers)
   fake_account_tracker
 end
 
@@ -81,12 +81,12 @@ def mock_fog_connection
   fake_fog_connection
 end
 
-def mock_resource_tracker(resource_class, number_of_resources = 0)
-  fake_resource_tracker = double("mock_resource_tracker")
+def mock_collection_tracker(resource_class, number_of_resources = 0)
+  fake_collection_tracker = double("mock_collection_tracker")
   resources = Array.new
   number_of_resources.times do
     resources << resource_class.new
   end
-  fake_resource_tracker.stub(:collection).and_return(resources)
-  fake_resource_tracker
+  fake_collection_tracker.stub(:collection).and_return(resources)
+  fake_collection_tracker
 end

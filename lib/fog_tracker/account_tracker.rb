@@ -5,7 +5,7 @@ module FogTracker
     require 'fog'
 
     attr_reader :name, :account, :log, :delay
-    attr_reader :resource_trackers
+    attr_reader :collection_trackers
 
     # Creates an object for tracking all collections in a single Fog account
     #
@@ -32,10 +32,10 @@ module FogTracker
                               FogTracker::DEFAULT_POLLING_TIME
       @error_proc = options[:error_callback]
       @log.debug "Creating tracker for account #{@name}."
-      create_resource_trackers
+      create_collection_trackers
     end
 
-    # Starts a background thread, which updates all @resource_trackers
+    # Starts a background thread, which updates all @collection_trackers
     def start
       if not running?
       @log.debug "Starting tracking for account #{@name}..."
@@ -43,7 +43,7 @@ module FogTracker
           begin
             while true do
               @log.info "Polling account #{@name}..."
-              @resource_trackers.each {|tracker| tracker.update}
+              @collection_trackers.each {|tracker| tracker.update}
               @callback.call(all_resources) if @callback
               sleep @delay
             end
@@ -60,7 +60,7 @@ module FogTracker
       end
     end
 
-    # Stops all the @resource_trackers
+    # Stops all the @collection_trackers
     def stop
       if running?
         @log.info "Stopping tracker for #{name}..."
@@ -89,18 +89,18 @@ module FogTracker
 
     # Returns an Array of all this Account's currently tracked Resources
     def all_resources
-      (@resource_trackers.collect do |tracker|
+      (@collection_trackers.collect do |tracker|
         tracker.collection
       end).flatten
     end
 
     private
 
-    # Creates and returns an Array of ResourceTracker objects -
+    # Creates and returns an Array of CollectionTracker objects -
     # one for each resource type associated with this account's service
-    def create_resource_trackers
-      @resource_trackers = tracked_types.map do |fog_collection_name|
-        FogTracker::ResourceTracker.new(fog_collection_name.to_s, self)
+    def create_collection_trackers
+      @collection_trackers = tracked_types.map do |fog_collection_name|
+        FogTracker::CollectionTracker.new(fog_collection_name.to_s, self)
       end
     end
 

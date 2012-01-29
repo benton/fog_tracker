@@ -31,7 +31,7 @@ module FogTracker
       # Here's where most of the network overhead is actually incurred
       fog_collection.each do |resource|
         @log.debug "Fetching resource: #{resource.class} #{resource.identity}"
-        resource.fog_collection_tracker = self
+        resource._fog_collection_tracker = self
         new_collection << resource
         @log.debug "Got resource: #{resource.inspect}"
       end

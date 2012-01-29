@@ -1,8 +1,8 @@
 require 'logger'
 
 # Load all ruby files from the 'fog' and 'fog_tracker' directories
-Dir[File.join(File.dirname(__FILE__), "fog/**/*.rb")].each {|f| require f}
 Dir[File.join(File.dirname(__FILE__), "fog_tracker/**/*.rb")].each {|f| require f}
+Dir[File.join(File.dirname(__FILE__), "fog/**/*.rb")].each {|f| require f}
 
 module FogTracker
 

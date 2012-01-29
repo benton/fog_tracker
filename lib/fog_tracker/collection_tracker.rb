@@ -1,16 +1,16 @@
 module FogTracker
 
-  # Tracks a single Fog collection in a single account
+  # Tracks a single Fog collection in a single account.
+  # Each {CollectionTracker} instance is tightly bound to an {AccountTracker}.
   class CollectionTracker
 
+    # An Array of Fog::Model objects, all of the same resource type (class)
     attr_accessor :collection
 
     # Creates an object for tracking a single Fog collection in a single account
-    #
-    # ==== Attributes
-    #
-    # * +resource_type+ - the Fog collection name (String) for this resource type
-    # * +account_tracker+ - the AccountTracker for this tracker's @collection
+    # @param [String] resource_type the Fog collection name for this resource type
+    # @param [AccountTracker] account_tracker the AccountTracker for this tracker's
+    #       account. Usually the AccountTracker that created this object
     def initialize(resource_type, account_tracker)
       @type             = resource_type
       @account_tracker  = account_tracker
@@ -21,8 +21,8 @@ module FogTracker
       @log.debug "Created tracker for #{@type} on #{@account_name}."
     end
 
-    # Polls the account's connection for updated info on all existing
-    # instances of the relevant resource type, and saves them as @collection
+    # Polls the {AccountTracker}'s connection for updated info on all existing
+    # instances of this tracker's resource_type
     def update
       @log.info "Polling #{@type} on #{@account_name}..."
       fog_collection = @account_tracker.connection.send(@type) || Array.new
@@ -38,8 +38,8 @@ module FogTracker
       @collection = new_collection
     end
 
-    # Returns a Hash of account information as resource.tracker_account
-    # a :name parameter is added, and the :credentials are removed
+    # @return [Hash] a Hash of account information, slighly modified:
+    #    a :name parameter is added, and the :credentials are removed
     def clean_account_data
       @clean_data ||= @account  # generate this data only once per res
       @clean_data[:name] = @account_name

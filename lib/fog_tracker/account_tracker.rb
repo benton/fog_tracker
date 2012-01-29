@@ -4,24 +4,24 @@ module FogTracker
   class AccountTracker
     require 'fog'
 
-    attr_reader :name, :account, :log, :delay
+    # The name (String) of the account this tracker is polling
+    attr_reader :name
+    # A Hash of account-specific configuration data
+    attr_reader :account
+    # A Logger-compatible object
+    attr_reader :log
+    # How long to wait between successive polling of this account (Integer)
+    attr_reader :delay
 
     # Creates an object for tracking all collections in a single Fog account
-    #
-    # ==== Attributes
-    #
-    # * +account_name+ - a human-readable name for the account (String)
-    # * +account+ - a Hash of account information (see accounts.yml.example)
-    # * +options+ - Hash of optional parameters
-    #
-    # ==== Options
-    #
-    # * +:delay+ - Default time between polling of accounts
-    # * +:callback+ - A Method or Proc to call each time an account is polled.
-    #     It should take the name of the account as its only required parameter
-    # * +:error_callback+ - A Proc to call if polling errors occur.
-    #     It should take a single Exception as its only required parameter
-    # * +:logger+ - a Ruby Logger-compatible object
+    # @param [String] account_name a human-readable name for the account
+    # @param [Hash] options optional additional parameters:
+    #  - :delay (Integer) - Default time between polling of accounts
+    #  - :callback (Proc) - A Method or Proc to call each time an account is polled.
+    #    (should take the name of the account as its only required parameter)
+    #  - :error_callback (Proc) - A Method or Proc to call if polling errors occur.
+    #    (should take a single Exception as its only required parameter)
+    #  - :logger - a Ruby Logger-compatible object
     def initialize(account_name, account, options={})
       @name     = account_name
       @account  = account
@@ -34,7 +34,8 @@ module FogTracker
       create_collection_trackers
     end
 
-    # Starts a background thread, which updates all @collection_trackers
+    # Starts a background thread, which periodically polls for all the
+    # resource collections for this tracker's account
     def start
       if not running?
       @log.debug "Starting tracking for account #{@name}..."
@@ -59,7 +60,7 @@ module FogTracker
       end
     end
 
-    # Stops all the @collection_trackers
+    # Stops polling this tracker's account
     def stop
       if running?
         @log.info "Stopping tracker for #{name}..."

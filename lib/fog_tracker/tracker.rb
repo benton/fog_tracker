@@ -1,25 +1,21 @@
 module FogTracker
 
-  # Tracks one or more Fog accounts and exposes a query() on the results
+  # Tracks one or more Fog accounts and exposes a {#query} on the results
   class Tracker
 
+    #a Hash of account information (see accounts.yml.example)
     attr_accessor :accounts
 
-    # Creates an object for tracking Fog accounts
-    #
-    # ==== Attributes
-    #
-    # * +accounts+ - a Hash of account information (see accounts.yml.example)
-    # * +options+ - Hash of optional parameters
-    #
-    # ==== Options
-    #
-    # * +:delay+ - Time between polling of accounts. Overrides per-account value
-    # * +:callback+ - A Proc to call each time an account is polled.
-    #     It should take the name of the account as its only required parameter
-    # * +:error_callback+ - A Proc to call if polling errors occur.
-    #     It should take a single Exception as its only required parameter
-    # * +:logger+ - a Ruby Logger-compatible object
+    # Creates an object for tracking multiple Fog accounts
+    # @param [Hash] accounts a Hash of account information
+    #    (see accounts.yml.example)
+    # @param [Hash] options optional additional parameters:
+    #  - :delay (Integer) - Default time between polling of accounts
+    #  - :callback (Proc) - A Method or Proc to call each time an account is polled.
+    #    (should take the name of the account as its only required parameter)
+    #  - :error_callback (Proc) - A Method or Proc to call if polling errors occur.
+    #    (should take a single Exception as its only required parameter)
+    #  - :logger - a Ruby Logger-compatible object
     def initialize(accounts = {}, options = {})
       @accounts = accounts
       @delay    = options[:delay]
@@ -28,9 +24,11 @@ module FogTracker
       @error_proc = options[:error_callback]
       # Create a Hash that maps account names to AccountTrackers
       create_trackers
+      @running  = false
     end
 
-    # Invokes the start method on all the @trackers
+    # Starts periodically polling all this tracker's accounts
+    # for all their Fog resource collections
     def start
       if not running?
         @log.info "Tracking #{@trackers.keys.count} accounts..."
@@ -41,7 +39,7 @@ module FogTracker
       end
     end
 
-    # Invokes the stop method on all the @trackers
+    # Stops polling for all this tracker's accounts
     def stop
       if running?
         @log.info "Stopping tracker..."
@@ -52,21 +50,22 @@ module FogTracker
       end
     end
 
-    # Returns true or false/nil depending on whether this tracker is polling
+    # Returns true or false, depending on whether this tracker is polling
+    # @return [true, false]
     def running? ; @running end
 
-    # Returns an array of Resource types (Strings) for a given account
+    # Returns an Array of resource types for a given account
+    # @param [String] name the name of the account
+    # @return [Array<String>] an array of Resource types 
     def types_for_account(account_name)
       @trackers[account_name].tracked_types
     end
 
-    # Returns an array of Resources matching the +query_string+
-    # Calls any block passed for each resulting resource
-    #
-    # ==== Attributes
-    #
-    # * +query_string+ - a String used to filter the discovered Resources
+    # Returns an array of Resources matching the {query_string}.
+    # Calls any block passed for each resulting resource.
+    # @param [String] query_string a string used to filter for matching resources
     #          it might look like: "Account Name::Compute::AWS::servers"
+    # @return [Array <Fog::Model>] an Array of Resources, filtered by query
     def query(query_string)
       results = FogTracker::Query::QueryProcessor.new(
         @trackers, :logger => @log
@@ -89,7 +88,7 @@ module FogTracker
       @accounts.each do |name, account|
         @log.debug "Setting up tracker for account #{name}"
         @trackers[name] = AccountTracker.new(name, account,
-        {:delay => @delay, :callback => @callback, 
+        {:delay => @delay, :callback => @callback,
           :error_callback => @error_proc, :logger => @log})
       end
     end

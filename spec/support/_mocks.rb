@@ -21,10 +21,6 @@ module FogTracker
   module Query
     QUERY = {}  # Used in query_processor_spec.rb
   end
-  class MockFogResource < Fog::Model
-    #attr_accessor :tracker_account
-    def identity ; "random-resource-id-#{rand 65536}" end
-  end
 end
 
 # Create some fake Fog Resource and Collection Classes

@@ -1,25 +1,25 @@
 module FogTracker
   module Query
+    # A class for gathering all Fog resources for a set of {AccountTracker}s,
+    # and filtering them based on a regular-expression-based query
     class QueryProcessor
 
+      # The Regular Expression which all resource queries must match
       QUERY_PATTERN = %r{(.*)::(.*)::(.*)::(.*)}
 
       # Creates an object for filtering Resources from a set of AccountTrackers
-      #
-      # ==== Attributes
-      #
-      # * +trackers+ - a Hash of AccountTrackers, indexed by Account name
-      # * +options+ - Hash of optional parameters
-      #
-      # ==== Options
-      #
-      # * +:logger+ - a Ruby Logger-compatible object
+      # @param [Hash] trackers a Hash of AccountTrackers, indexed by account name
+      # @param [Hash] options optional additional parameters:
+      #  - :logger - a Ruby Logger-compatible object
       def initialize(trackers, options={})
         @trackers = trackers
         @log      = options[:logger] || FogTracker.default_logger
       end
 
-      # Returns an Array of Resources, filtered by +query+
+      # Uses the query string to filter this account's resources 
+      # for a desired subset
+      # @param [String] query a string used to filter for matching resources
+      # @return [Array <Fog::Model>] an Array of Resources, filtered by query
       def execute(query)
         acct_pattern, svc_pattern, prov_pattern, col_pattern = parse_query(query)
         filter_by_collection(
@@ -48,13 +48,13 @@ module FogTracker
         end
       end
 
-      # Converts a String +token+ into a RegEx for matching query values
+      # Converts a String token into a RegEx for matching query values
       def regex_from_token(token)
         token = '.*' if token == '*'  # a single wildcard is a special case
         %r{^\s*#{token}\s*$}i         # otherwise, interpret as a RegEx
       end
 
-      # Returns a subset of all Resources, filtered only by +acct_name_pattern+
+      # Returns a subset of all Resources, filtered only by acct_name_pattern
       def get_results_by_account(acct_name_pattern)
         results = Array.new
         @trackers.each do |account_name, account_tracker|

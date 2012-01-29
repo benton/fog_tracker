@@ -5,8 +5,18 @@ module FogTracker
     describe AccountTracker do
 
       before(:each) do
+        @account_receiver = double "account callback object"
+        @account_receiver.stub(:callback)
+        @error_receiver = double "error callback object"
+        @error_receiver.stub(:callback)
         @tracker = AccountTracker.new(
-          FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
+          FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, #:logger => LOG, # uncomment to debug
+          :callback => Proc.new do |resources|
+              @account_receiver.callback(resources)
+          end,
+          :error_callback => Proc.new do |resources|
+              @error_receiver.callback(resources)
+          end
         )
       end
 
@@ -30,15 +40,8 @@ module FogTracker
         context "when initialized with an error callback" do
           it "should fire the callback" do
             CollectionTracker.any_instance.stub(:update).and_raise
-            receiver = double "error callback object"
-            receiver.stub(:callback)
-            tracker = AccountTracker.new(
-              FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, {
-                :error_callback => Proc.new {|err| receiver.callback(err)}
-              }
-            )
-            receiver.should_receive(:callback).exactly(:once)
-            tracker.start
+            @error_receiver.should_receive(:callback).exactly(:once)
+            @tracker.start
             sleep THREAD_STARTUP_DELAY
           end
         end
@@ -53,14 +56,9 @@ module FogTracker
           sleep THREAD_STARTUP_DELAY # wait for background thread to start
         end
         it "invokes its callback Proc when its account is updated" do
-          receiver = double "account callback object"
-          receiver.stub(:callback)
-          tracker = AccountTracker.new(
-            FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG,
-            :callback => Proc.new {|resources| receiver.callback(resources)}
-          )
-          receiver.should_receive(:callback).exactly(FAKE_ACCOUNTS.size).times
-          tracker.start
+          @account_receiver.should_receive(:callback).
+            exactly(FAKE_ACCOUNTS.size).times
+          @tracker.start
           sleep THREAD_STARTUP_DELAY
         end
       end
@@ -72,7 +70,8 @@ module FogTracker
         end
         it "kills its timer thread" do
           @tracker.start ; @tracker.stop
-          @tracker.collection_trackers.first.should_not_receive(:update)
+          @tracker.collection_trackers.first.
+            should_not_receive(:update)
           sleep THREAD_STARTUP_DELAY # wait to make sure no update()s are sent
         end
       end

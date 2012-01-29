@@ -93,6 +93,14 @@ module FogTracker
         end
       end
 
-    end
+      describe '#all_resources' do
+        it "returns a flattened Array of all its CollectionTrackers collections" do
+          COLLECTION = [ 1, 2, 3 ]
+          NUM_TYPES = @tracker.tracked_types.size
+          CollectionTracker.any_instance.stub(:collection).and_return(COLLECTION)
+          @tracker.all_resources.should == ((1..NUM_TYPES).map {COLLECTION}).flatten
+        end
+      end
 
+    end
 end

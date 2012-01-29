@@ -14,8 +14,8 @@ module FogTracker
           :callback => Proc.new do |resources|
               @account_receiver.callback(resources)
           end,
-          :error_callback => Proc.new do |resources|
-              @error_receiver.callback(resources)
+          :error_callback => Proc.new do |exception|
+              @error_receiver.callback(exception)
           end
         )
       end

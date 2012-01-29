@@ -59,9 +59,7 @@ module FogTracker
         results = Array.new
         @trackers.each do |account_name, account_tracker|
           if account_name.match acct_name_pattern
-            account_tracker.collection_trackers.each do |collection_tracker|
-              results += collection_tracker.collection
-            end
+            results += account_tracker.all_resources
           end
         end
         results

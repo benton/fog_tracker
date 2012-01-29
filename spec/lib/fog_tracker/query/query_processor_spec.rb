@@ -23,7 +23,9 @@ module FogTracker
           QUERY.each do |name, query|
             it "should return an empty Array for a query #{name}" do
               QueryProcessor.new(
-                {FAKE_ACCOUNT_NAME => mock_account_tracker}, :logger => LOG
+                {FAKE_ACCOUNT_NAME => AccountTracker.new(
+                  FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
+                )}, :logger => LOG
               ).execute(query).should == []
             end
           end
@@ -31,15 +33,24 @@ module FogTracker
 
         context "with a pre-populated, diverse set of Resources" do
           # Create a prepopulated QueryProcessor
-          NUMBER_OF_ACCOUNTS    = 8
-          RESOURCES_PER_ACCOUNT = 2
-          NUMBER_OF_COLLECTIONS = [5, NUMBER_OF_FAKE_RESOURCE_TYPES].min
+          NUMBER_OF_ACCOUNTS       = 8
+          NUMBER_OF_COLLECTIONS    = [5, NUMBER_OF_FAKE_RESOURCE_TYPES].min
+          RESOURCES_PER_COLLECTION = 10
           before(:each) do
             account_trackers =
               (1..NUMBER_OF_ACCOUNTS).inject({}) do |t, account_index|
-                t["Fake Account #{account_index}"] = mock_account_tracker(
-                  NUMBER_OF_COLLECTIONS, RESOURCES_PER_ACCOUNT
-                ) ; t
+                account_tracker = AccountTracker.new(
+                  FAKE_ACCOUNT_NAME, FAKE_ACCOUNT, :logger => LOG
+                )
+                account_tracker.stub(:all_resources).and_return(
+                  ((1..NUMBER_OF_COLLECTIONS).map do |collection_index|
+                    (1..RESOURCES_PER_COLLECTION).collect do |resource|
+                      create_resource(collection_index)
+                    end
+                  end).flatten
+                )
+                t["Fake Account #{account_index}"] = account_tracker
+                t
               end
             @processor = QueryProcessor.new(account_trackers, :logger => LOG)
           end
@@ -47,34 +58,34 @@ module FogTracker
           context "when running the query matching all Resources" do
             it "should return all Resources" do
               @processor.execute(QUERY['matching all Resources']).size.should ==
-                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS* RESOURCES_PER_COLLECTION
             end
           end
           context "when running a query by account name" do
             it "should return all Resources for that account only" do
               @processor.execute(QUERY['by account name']).size.should ==
-                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS* RESOURCES_PER_COLLECTION
               @processor.execute('wrong account::*::*::*').size.should == 0
             end
           end
           context "when running a query by Fog service name" do
             it "should return all Resources for that service only" do
               @processor.execute(QUERY['by Fog Service']).size.should ==
-                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS* RESOURCES_PER_COLLECTION
               @processor.execute('*::wrong service::*::*').size.should == 0
             end
           end
           context "when running a query by Fog provider name" do
             it "should return all Resources for that provider only" do
               @processor.execute(QUERY['by Fog Provider']).size.should ==
-                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS * RESOURCES_PER_ACCOUNT
+                NUMBER_OF_ACCOUNTS * NUMBER_OF_COLLECTIONS* RESOURCES_PER_COLLECTION
                 @processor.execute('*::*::wrong provider::*').size.should == 0
             end
           end
           context "when running a query by Fog collection name" do
             it "should return all Resources for that collection only" do
               @processor.execute(QUERY['by Fog collection name']).size.should ==
-                NUMBER_OF_ACCOUNTS * RESOURCES_PER_ACCOUNT
+                NUMBER_OF_ACCOUNTS * RESOURCES_PER_COLLECTION
               @processor.execute('*::*::*::wrong collection').size.should == 0
               true
             end

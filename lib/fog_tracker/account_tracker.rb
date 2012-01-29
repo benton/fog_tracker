@@ -5,7 +5,6 @@ module FogTracker
     require 'fog'
 
     attr_reader :name, :account, :log, :delay
-    attr_reader :collection_trackers
 
     # Creates an object for tracking all collections in a single Fog account
     #

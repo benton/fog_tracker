@@ -32,9 +32,6 @@ module FogTracker
       it "exposes the connection to its logger" do
         @tracker.log.should_not == nil
       end
-      it "exposes a collection of CollectionTrackers" do
-        @tracker.collection_trackers.size.should be > 0
-      end
 
       context "when it encounters an Exception while updating" do
         context "when initialized with an error callback" do
@@ -49,9 +46,12 @@ module FogTracker
 
       describe '#start' do
         it "sends update() to its CollectionTrackers" do
-          @tracker.collection_trackers.each do |collection_tracker|
-            collection_tracker.should_receive(:update)
+          update_catcher = double "mock for catching CollectionTracker::update"
+          update_catcher.stub(:update)
+          CollectionTracker.any_instance.stub(:update) do
+            update_catcher.update
           end
+          update_catcher.should_receive(:update)
           @tracker.start
           sleep THREAD_STARTUP_DELAY # wait for background thread to start
         end
@@ -70,8 +70,7 @@ module FogTracker
         end
         it "kills its timer thread" do
           @tracker.start ; @tracker.stop
-          @tracker.collection_trackers.first.
-            should_not_receive(:update)
+          @account_receiver.should_not_receive(:callback)
           sleep THREAD_STARTUP_DELAY # wait to make sure no update()s are sent
         end
       end

@@ -5,7 +5,7 @@ module FogTracker
   class CollectionTracker
 
     # An Array of Fog::Model objects, all of the same resource type (class)
-    attr_accessor :collection
+    attr_reader :collection
 
     # Creates an object for tracking a single Fog collection in a single account
     # @param [String] resource_type the Fog collection name for this resource type

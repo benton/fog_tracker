@@ -31,8 +31,9 @@ module Fog
       (1..NUMBER_OF_FAKE_RESOURCE_TYPES).each do |class_index|
         eval(%Q{
             class FakeCollectionType#{class_index} ; end
-            class FakeResourceType#{class_index}
+            class FakeResourceType#{class_index} < Fog::Model
               def collection ; FakeCollectionType#{class_index}.new end
+              def identity; "Fake_ID_for_Type#{class_index} " end
             end
           })
       end

@@ -4,10 +4,10 @@
 #   Uses the Fog gem to track the status of cloud computing resources
 #
 # == Usage
-#   tracker.rb [options] ACCOUNTS_CONFIG_FILE.YML
+#   fog_tracker.rb [options] ACCOUNTS_CONFIG_FILE.YML
 #
 # == Options (all options can be put into the config file)
-#   -d, --delay [INTEGER]       Seconds between status updates. default = 180
+#   -d, --delay [INTEGER]       Seconds between status updates.
 #   -l, --log-level [LEVEL]     Sets Log4r level for console output. default = INFO
 #   -h, --help                  Displays help message
 #

@@ -56,12 +56,12 @@ module FogTracker
 
     # Returns an Array of resource types for a given account
     # @param [String] name the name of the account
-    # @return [Array<String>] an array of Resource types 
+    # @return [Array<String>] an array of Resource types
     def types_for_account(account_name)
       @trackers[account_name].tracked_types
     end
 
-    # Returns an array of Resources matching the {query_string}.
+    # Returns an array of Resources matching the query_string.
     # Calls any block passed for each resulting resource.
     # @param [String] query_string a string used to filter for matching resources
     #          it might look like: "Account Name::Compute::AWS::servers"

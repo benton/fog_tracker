@@ -16,7 +16,7 @@ module FogTracker
         @log      = options[:logger] || FogTracker.default_logger
       end
 
-      # Uses the query string to filter this account's resources 
+      # Uses the query string to filter this account's resources
       # for a desired subset
       # @param [String] query a string used to filter for matching resources
       # @return [Array <Fog::Model>] an Array of Resources, filtered by query
@@ -24,7 +24,9 @@ module FogTracker
         acct_pattern, svc_pattern, prov_pattern, col_pattern = parse_query(query)
         filter_by_collection(
           filter_by_provider(
-            filter_by_service(get_results_by_account(acct_pattern), svc_pattern),
+            filter_by_service(
+              attach_query_methods(get_results_by_account(acct_pattern)),
+              svc_pattern),
             prov_pattern),
           col_pattern)
       end
@@ -87,6 +89,12 @@ module FogTracker
           collection_class = resource.collection.class.name.match(/::(\w+)$/)[1]
           collection_class.to_underscore.match collection_pattern
         end
+      end
+
+      # adds the _tracker_query_parser attribute to all resources
+      def attach_query_methods(resources)
+        resources.each {|resource| resource._query_processor = self}
+        resources
       end
 
     end

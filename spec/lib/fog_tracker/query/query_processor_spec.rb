@@ -88,9 +88,15 @@ module FogTracker
               true
             end
           end
-
+          it "assigns itself to @_query_processor on all resoruces" do
+            @processor.execute(QUERY['matching all Resources']).each do |resource|
+              resource._query_processor.should == @processor
+            end
+          end
         end
+
       end
     end
+
   end
 end

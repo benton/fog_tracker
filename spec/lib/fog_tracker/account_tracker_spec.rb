@@ -34,6 +34,23 @@ module FogTracker
         @tracker.account[:polling_time].should be_an_instance_of(Fixnum)
       end
 
+      describe '#update' do
+        it "sends update() to its CollectionTrackers" do
+          update_catcher = double "mock for catching CollectionTracker::update"
+          update_catcher.stub(:update)
+          CollectionTracker.any_instance.stub(:update) do
+            update_catcher.update
+          end
+          update_catcher.should_receive(:update)
+          @tracker.update
+        end
+        it "invokes its callback Proc when its account is updated" do
+          @account_receiver.should_receive(:callback).
+            exactly(FAKE_ACCOUNTS.size).times
+          @tracker.update
+        end
+      end
+
       context "when it encounters an Exception while updating" do
         context "when initialized with an error callback" do
           it "should fire the callback" do

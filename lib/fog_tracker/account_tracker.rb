@@ -73,6 +73,20 @@ module FogTracker
       end
     end
 
+    # Polls once for all the resource collections for this tracker's account
+    def update
+      begin
+        @log.info "Polling account #{@name}..."
+        @collection_trackers.each {|tracker| tracker.update}
+        @callback.call(all_resources) if @callback
+      rescue Exception => e
+        @log.error "Exception polling account #{name}: #{e.message}"
+        e.backtrace.each {|line| @log.debug line}
+        @error_proc.call(e) if @error_proc
+        raise e
+      end
+    end
+
     # Returns true or false depending on whether this tracker is polling
     def running? ; @timer != nil end
 

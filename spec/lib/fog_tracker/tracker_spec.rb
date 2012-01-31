@@ -22,6 +22,8 @@ module FogTracker
 
     before(:each) do
       @tracker = Tracker.new(ACCOUNTS, :logger => LOG)
+      @execute_receiver = double "Query::execute receiver"
+      @execute_receiver.stub(:execute)
     end
 
     it "exposes a Hash of account information" do
@@ -40,12 +42,27 @@ module FogTracker
       end
     end
 
+    describe '#update' do
+      it "calls update on all its AccountTrackers" do
+        receiver = double('AccountTracker::update receiver')
+        receiver.stub(:update)
+        AccountTracker.any_instance.stub(:update) {receiver.update}
+        receiver.should_receive(:update).exactly(ACCOUNTS.keys.size).times
+        @tracker.update
+      end
+    end
+
     describe '#all' do
-      it 'returns all resources tracked across all accounts' do
-        AccountTracker.any_instance.stub(:all_resources).and_return(['A', 'B', 'C'])
-        @tracker.start
-        sleep THREAD_STARTUP_DELAY
-        @tracker.all.should == ['A', 'B', 'C', 'A', 'B', 'C']
+      WILDCARD_QUERY = '*::*::*::*'
+      before(:each) do
+        Query::QueryProcessor.any_instance.stub(:execute) do |query|
+          @execute_receiver.execute(query)
+          ['A', 'B', 'C']
+        end
+      end
+      it "returns the result of the wildcard query: #{WILDCARD_QUERY}" do
+        @execute_receiver.should_receive(:execute).with(WILDCARD_QUERY)
+        @tracker.all.should == ['A', 'B', 'C']
       end
     end
 
@@ -53,19 +70,16 @@ module FogTracker
       it "invokes any passed code block once per resulting Resource" do
         receiver = double "resource callback object"
         receiver.stub(:callback)
-        @tracker.start
-        sleep THREAD_STARTUP_DELAY
+        @tracker.update
         res_count = @tracker.query('*::*::*::*').count
         receiver.should_receive(:callback).exactly(res_count).times
         @tracker.query('*::*::*::*') {|r| receiver.callback(r)}
       end
       it "passes the query request to its QueryProcessor" do
-        receiver = double "Query::execute receiver"
-        receiver.stub(:execute)
         Query::QueryProcessor.any_instance.stub(:execute) do |query|
-          receiver.execute(query)
+          @execute_receiver.execute(query)
         end
-        receiver.should_receive(:execute).with("query_string")
+        @execute_receiver.should_receive(:execute).with("query_string")
         @tracker.query('query_string')
       end
     end
@@ -78,8 +92,7 @@ module FogTracker
           :callback => Proc.new {|resources| receiver.callback(resources)}
         )
         receiver.should_receive(:callback).exactly(ACCOUNTS.size).times
-        tracker.start
-        sleep THREAD_STARTUP_DELAY
+        tracker.update
       end
     end
 

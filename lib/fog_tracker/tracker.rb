@@ -50,6 +50,13 @@ module FogTracker
       end
     end
 
+    # Polls all accounts once in the calling thread (synchronously)
+    # @return [Array <Fog::Model>] an Array of all discovered resources
+    def update
+      @trackers.each_value {|tracker| tracker.update}
+      all
+    end
+
     # Returns true or false, depending on whether this tracker is polling
     # @return [true, false]
     def running? ; @running end
@@ -77,16 +84,10 @@ module FogTracker
 
     # Returns an Array of all Resources currenty tracked
     # @return [Array <Fog::Model>] an Array of Resources
-    def all
-      (@trackers.each_value.collect do |account_tracker|
-        account_tracker.all_resources
-      end).flatten
-    end
+    def all ; query '*::*::*::*' end
 
     # Returns this tracker's logger, for changing logging dynamically
-    def logger
-      @log
-    end
+    def logger ; @log end
 
     private
 

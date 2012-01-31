@@ -43,18 +43,11 @@ module FogTracker
       @log.debug "Starting tracking for account #{@name}..."
         @timer = Thread.new do
           begin
-            while true do
-              @log.info "Polling account #{@name}..."
-              @collection_trackers.each {|tracker| tracker.update}
-              @callback.call(all_resources) if @callback
-              sleep @delay
+            while true
+              update ; sleep @delay
             end
           rescue Exception => e
-            @log.error "Exception polling account #{name}: #{e.message}"
-            e.backtrace.each {|line| @log.debug line}
-            @error_proc.call(e) if @error_proc
-            sleep @delay
-            retry
+            sleep @delay ; retry
           end
         end
       else

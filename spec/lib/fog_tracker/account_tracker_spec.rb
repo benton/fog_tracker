@@ -49,35 +49,24 @@ module FogTracker
             exactly(FAKE_ACCOUNTS.size).times
           @tracker.update
         end
-      end
-
-      context "when it encounters an Exception while updating" do
-        context "when initialized with an error callback" do
-          it "should fire the callback" do
+        context "when it encounters an Exception" do
+          it "raises the Exception" do
             CollectionTracker.any_instance.stub(:update).and_raise
-            @error_receiver.should_receive(:callback).exactly(:once)
-            @tracker.start
-            sleep THREAD_STARTUP_DELAY
+            (Proc.new { @tracker.update }).should raise_error
           end
         end
       end
 
       describe '#start' do
-        it "sends update() to its CollectionTrackers" do
-          update_catcher = double "mock for catching CollectionTracker::update"
-          update_catcher.stub(:update)
-          CollectionTracker.any_instance.stub(:update) do
-            update_catcher.update
+        context "when initialized with an error callback" do
+          context "when it encounters an Exception" do
+            it "should fire the callback" do
+              CollectionTracker.any_instance.stub(:update).and_raise
+              @error_receiver.should_receive(:callback).exactly(:once)
+              @tracker.start
+              sleep THREAD_STARTUP_DELAY
+            end
           end
-          update_catcher.should_receive(:update)
-          @tracker.start
-          sleep THREAD_STARTUP_DELAY # wait for background thread to start
-        end
-        it "invokes its callback Proc when its account is updated" do
-          @account_receiver.should_receive(:callback).
-            exactly(FAKE_ACCOUNTS.size).times
-          @tracker.start
-          sleep THREAD_STARTUP_DELAY
         end
       end
 

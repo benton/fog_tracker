@@ -54,7 +54,9 @@ module FogTracker
     # @return [Array <Fog::Model>] an Array of all discovered resources
     def update
       @trackers.each_value {|tracker| tracker.update}
-      all
+      results = all
+      (results.each {|r| yield r}) if block_given?
+      results
     end
 
     # Returns true or false, depending on whether this tracker is polling
@@ -84,8 +86,11 @@ module FogTracker
 
     # Returns an Array of all Resources currenty tracked
     # @return [Array <Fog::Model>] an Array of Resources
-    # TODO: pass block through to query()
-    def all ; query '*::*::*::*' end
+    def all
+      results = query '*::*::*::*'
+      (results.each {|r| yield r}) if block_given?
+      results
+    end
 
     # Returns this tracker's logger, for changing logging dynamically
     def logger ; @log end

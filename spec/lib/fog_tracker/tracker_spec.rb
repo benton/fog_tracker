@@ -50,6 +50,12 @@ module FogTracker
         receiver.should_receive(:update).exactly(ACCOUNTS.keys.size).times
         @tracker.update
       end
+      it "invokes any passed code block once per resulting Resource" do
+        receiver = double "resource callback object"
+        @tracker.update # (NOT the call we're testing -- just getting the count)
+        receiver.should_receive(:callback).exactly(@tracker.all.count).times
+        @tracker.update {|resource| receiver.callback resource}
+      end
     end
 
     describe '#all' do
@@ -63,6 +69,11 @@ module FogTracker
       it "returns the result of the wildcard query: #{WILDCARD_QUERY}" do
         @execute_receiver.should_receive(:execute).with(WILDCARD_QUERY)
         @tracker.all.should == ['A', 'B', 'C']
+      end
+      it "invokes any passed code block once per resulting Resource" do
+        receiver = double "resource callback object"
+        receiver.should_receive(:callback).exactly(@tracker.update.size).times
+        @tracker.all {|resource| receiver.callback resource}
       end
     end
 

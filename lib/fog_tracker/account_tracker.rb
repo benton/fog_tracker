@@ -29,6 +29,7 @@ module FogTracker
       @log      = options[:logger] || FogTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
                               FogTracker::DEFAULT_POLLING_TIME
+      @account[:polling_time] = @delay  # TODO - test this
       @error_proc = options[:error_callback]
       @log.debug "Creating tracker for account #{@name}."
       create_collection_trackers

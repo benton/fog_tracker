@@ -2,7 +2,15 @@ module FogTracker
   describe Tracker do
 
     ACCOUNTS = {
-      "fake account" => {
+      "fake account 1" => {
+        :provider                 => 'AWS',
+        :service                  => 'Compute',
+        :credentials => {
+          :aws_access_key_id      => 'X',
+          :aws_secret_access_key  => 'X'
+        }, :exclude_resources     => [ :spot_requests ]
+      },
+      "fake account 2" => {
         :provider                 => 'AWS',
         :service                  => 'Compute',
         :credentials => {
@@ -27,14 +35,14 @@ module FogTracker
       it "returns an array of collection names for the given account" do
         [ "addresses", "flavors", "images", "key_pairs", "security_groups",
           "servers", "snapshots", "tags", "volumes"].each do |collection|
-            @tracker.types_for_account("fake account").should include(collection)
+            @tracker.types_for_account("fake account 1").should include(collection)
         end
       end
     end
 
     describe '#query' do
       it "invokes any passed code block once per resulting Resource" do
-        receiver = double "resrouce callback object"
+        receiver = double "resource callback object"
         receiver.stub(:callback)
         @tracker.start
         sleep THREAD_STARTUP_DELAY
@@ -46,7 +54,12 @@ module FogTracker
     end
 
     describe '#all' do
-      it 'returns all resources tracked across all accounts'
+      it 'returns all resources tracked across all accounts' do
+        AccountTracker.any_instance.stub(:all_resources).and_return(['A', 'B', 'C'])
+        @tracker.start
+        sleep THREAD_STARTUP_DELAY
+        @tracker.all.should == ['A', 'B', 'C', 'A', 'B', 'C']
+      end
     end
 
     describe '#start' do

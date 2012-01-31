@@ -3,7 +3,7 @@ module FogTracker
     describe FogModel do
 
       before(:each) do
-        @model = Fog::Compute[:aws].servers.new
+        @model = FAKE_AWS.servers.new
       end
 
       describe '#tracker_account' do

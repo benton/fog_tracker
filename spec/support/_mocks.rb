@@ -18,6 +18,11 @@ module FogTracker
     ],
   }
   FAKE_ACCOUNTS = {FAKE_ACCOUNT_NAME => FAKE_ACCOUNT}
+  FAKE_AWS = Fog::Compute.new(
+    :provider => 'AWS',
+    :aws_access_key_id => FAKE_ACCOUNT[:credentials][:aws_access_key_id],
+    :aws_secret_access_key => FAKE_ACCOUNT[:credentials][:aws_secret_access_key],
+  )
   module Query
     QUERY = {}  # Used in query_processor_spec.rb
   end

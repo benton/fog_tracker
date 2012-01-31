@@ -3,14 +3,12 @@ module FogTracker
     # Adds convenience methods to Fog::Model instances for gathering
     # information about its account, and about other Fog::Model resources
     module FogModel
-      extend Forwardable        # Resources need to be queriable
 
       # a FogTracker::CollectionTracker - *do not modify* - used for {#tracker_account}
       attr_accessor :_fog_collection_tracker
 
       # a FogTracker::QueryParser - *do not modify* - used for tracker_query
       attr_accessor :_query_processor
-      def_delegator :@_query_processor, :execute, :tracker_query
 
       # Returns a cleaned copy of the resource's account information
       # from the its collection tracker (credentials are removed).
@@ -28,13 +26,30 @@ module FogTracker
       #   accout, whose collection matches collection_name.
       def account_resources(collection_name)
         (not @_query_processor) ? Array.new :
-        @_query_processor.execute(
+        results = @_query_processor.execute(
           "#{tracker_account[:name]}::"+
           "#{tracker_account[:service]}::"+
           "#{tracker_account[:provider]}::"+
           "#{collection_name}"
         )
+        (results.each {|r| yield r}) if block_given?
+        results
       end
+
+      # Runs a query across all accounts using a 
+      # {FogTracker::Query::QueryProcessor}. Any code block parameter will
+      # be executed once for (and with) each resulting resource.
+      # @param [String] query a string used to filter for matching resources
+      # @return [Array <Fog::Model>] an Array of Resources, filtered by query
+      def tracker_query(query_string)
+        results = Array.new
+        if @_query_processor
+          results = @_query_processor.execute(query_string)
+          (results.each {|r| yield r}) if block_given?
+        end
+        results
+      end
+
     end
   end
 end

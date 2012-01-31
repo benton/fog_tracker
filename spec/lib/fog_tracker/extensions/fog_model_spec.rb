@@ -31,20 +31,28 @@ module FogTracker
 
       describe '#tracker_query' do
         context "with no query processor assigned" do
-          it "raises a NoMethodError" do
-            q = Proc.new { @model.tracker_query('XXX') }
-            q.should raise_error
+          it "returns an empty Array" do
+            @model.tracker_query('XXX').should == []
           end
         end
         context "with a query processor assigned" do
           before(:each) do
             @fake_processor = double "mock query processor"
-            @fake_processor.stub(:query).and_return(Array.new)
             @model._query_processor = @fake_processor
           end
           it "forwards the query to its query processor" do
             @fake_processor.should_receive(:execute).with('XXX')
             @model.tracker_query('XXX')
+          end
+          context "when invoked with a block" do
+            it "calls the block once with each resulting resource" do
+              receiver = double "tracker_query callback receiver"
+              @fake_processor.stub(:execute).and_return(['A', 'B', 'C'])
+              receiver.should_receive(:callback).exactly(3).times
+              @model.tracker_query('*::*::*::*') do |resource|
+                receiver.callback(resource)
+              end
+            end
           end
         end
       end

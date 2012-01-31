@@ -84,6 +84,7 @@ module FogTracker
 
     # Returns an Array of all Resources currenty tracked
     # @return [Array <Fog::Model>] an Array of Resources
+    # TODO: pass block through to query()
     def all ; query '*::*::*::*' end
 
     # Returns this tracker's logger, for changing logging dynamically

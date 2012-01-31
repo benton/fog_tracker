@@ -15,6 +15,7 @@ module FogTracker
 
     # Creates an object for tracking all collections in a single Fog account
     # @param [String] account_name a human-readable name for the account
+    # @param [Hash] account a Hash of account configuration data
     # @param [Hash] options optional additional parameters:
     #  - :delay (Integer) - Default time between polling of accounts
     #  - :callback (Proc) - A Method or Proc to call each time an account is polled.
@@ -29,7 +30,7 @@ module FogTracker
       @log      = options[:logger] || FogTracker.default_logger
       @delay    = options[:delay]  || account[:polling_time] ||
                               FogTracker::DEFAULT_POLLING_TIME
-      @account[:polling_time] = @delay  # TODO - test this
+      @account[:polling_time] = @delay
       @error_proc = options[:error_callback]
       @log.debug "Creating tracker for account #{@name}."
       create_collection_trackers

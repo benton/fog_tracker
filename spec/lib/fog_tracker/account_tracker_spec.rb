@@ -30,6 +30,9 @@ module FogTracker
       it "exposes the connection to its logger" do
         @tracker.log.should_not == nil
       end
+      it "always sets a polling time" do
+        @tracker.account[:polling_time].should be_an_instance_of(Fixnum)
+      end
 
       context "when it encounters an Exception while updating" do
         context "when initialized with an error callback" do

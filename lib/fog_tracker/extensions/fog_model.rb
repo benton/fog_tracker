@@ -25,14 +25,16 @@ module FogTracker
       # @return [Array <Fog::Model>] an Array of resources from this Model's
       #   accout, whose collection matches collection_name.
       def account_resources(collection_name)
-        (not @_query_processor) ? Array.new :
-        results = @_query_processor.execute(
-          "#{tracker_account[:name]}::"+
-          "#{tracker_account[:service]}::"+
-          "#{tracker_account[:provider]}::"+
-          "#{collection_name}"
-        )
-        (results.each {|r| yield r}) if block_given?
+        results = Array.new
+        if @_query_processor
+          results = @_query_processor.execute(
+            "#{tracker_account[:name]}::"+
+            "#{tracker_account[:service]}::"+
+            "#{tracker_account[:provider]}::"+
+            "#{collection_name}"
+          )
+          (results.each {|r| yield r}) if block_given?
+        end
         results
       end
 

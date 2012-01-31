@@ -57,6 +57,41 @@ module FogTracker
         end
       end
 
+      describe '#account_resources' do
+        context "with no query processor assigned" do
+          it "returns an empty Array" do
+            @model.account_resources('XXX').should == []
+          end
+        end
+        context "with a query processor assigned" do
+          before(:each) do
+            collection_tracker = double("fake collection tracker")
+            collection_tracker.stub(:clean_account_data).and_return({
+              :name => 'fake account', :service => 'service',
+              :provider => 'provider'
+            })
+            @fake_processor = double "mock query processor"
+            @model._fog_collection_tracker = collection_tracker
+            @model._query_processor = @fake_processor
+          end
+          it "forwards the scoped collection query to its query processor" do
+            @fake_processor.should_receive(:execute).with(
+              'fake account::service::provider::collection_query'
+            )
+            @model.account_resources('collection_query')
+          end
+          context "when invoked with a block" do
+            it "calls the block once with each resulting resource" do
+              receiver = double "tracker_query callback receiver"
+              @fake_processor.stub(:execute).and_return(['A', 'B', 'C'])
+              receiver.should_receive(:callback).exactly(3).times
+              @model.tracker_query('*::*::*::*') do |resource|
+                receiver.callback(resource)
+              end
+            end
+          end
+        end
+      end
     end
   end
 end

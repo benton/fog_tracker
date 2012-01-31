@@ -59,7 +59,15 @@ module FogTracker
         receiver.should_receive(:callback).exactly(res_count).times
         @tracker.query('*::*::*::*') {|r| receiver.callback(r)}
       end
-      it "passes the query request to its QueryProcessor"
+      it "passes the query request to its QueryProcessor" do
+        receiver = double "Query::execute receiver"
+        receiver.stub(:execute)
+        Query::QueryProcessor.any_instance.stub(:execute) do |query|
+          receiver.execute(query)
+        end
+        receiver.should_receive(:execute).with("query_string")
+        @tracker.query('query_string')
+      end
     end
 
     describe '#start' do

@@ -42,6 +42,11 @@ module FogTracker
         receiver.should_receive(:callback).exactly(res_count).times
         @tracker.query('*::*::*::*') {|r| receiver.callback(r)}
       end
+      it "passes the query request to its QueryProcessor"
+    end
+
+    describe '#all' do
+      it 'returns all resources tracked across all accounts'
     end
 
     describe '#start' do

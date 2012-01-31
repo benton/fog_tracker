@@ -75,6 +75,14 @@ module FogTracker
     end
     alias :[] :query
 
+    # Returns an Array of all Resources currenty tracked
+    # @return [Array <Fog::Model>] an Array of Resources
+    def all
+      (@trackers.each_value.collect do |account_tracker|
+        account_tracker.all_resources
+      end).flatten
+    end
+
     # Returns this tracker's logger, for changing logging dynamically
     def logger
       @log

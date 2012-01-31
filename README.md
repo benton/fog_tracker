@@ -75,7 +75,7 @@ How is it [done]? (Usage)
 
         tracker.query("*::*::*::*"){|r| puts "Found #{r.class} #{r.identity}"}
 
-* You can also pass a Proc to the Tracker at initialization, which will be invoked whenever an account's Resources have been updated. It should accept an Array containing the updated Resources as its first argument:
+* You can pass a callback Proc to the Tracker at initialization, which will be invoked whenever all an account's Resources have been updated. It should accept an Array containing the updated Resources as its first parameter:
 
         FogTracker::Tracker.new(YAML::load(File.read 'accounts.yml'),
           :callback => Proc.new do |resources|
@@ -84,12 +84,12 @@ How is it [done]? (Usage)
           end
         ).start
 
-* The resources returned from a query are all Fog::Model objects, but they are "decorated" with some extra methods for your convenience. This simplifies the code that consumes the resources, because it does not have to know anything about the tracker. Here are the methods added:
-  1. To get a Resource's Hash of account information, call its `tracker_account` method _(credentials are removed)_.
-  2. To query for more resources, you can call `resource.tracker_query(query_string)`, though you cannot yet pass a block to this method.
-  3. To get a collection of resources from the same account, call `resource.account_resources(collection_name)`.
+* The resources returned from a query are all Fog::Model objects, but they are "decorated" with some extra methods for fetching the account information, or for fetching more resources. This simplifies the code that consumes the query results, because it does not have to know anything about the tracker. Here are the methods added by {FogTracker::Extensions::FogModel}:
+  1. `tracker_account` returns a Hash of the Resource's account information _(:name is added; :credentials are removed)_.
+  2. `tracker_query(query_string)` queries the tracker for more resources (though you cannot yet pass a block to this method).
+  3. `account_resources(collection_query)` returns an Array of resources from the same account. (This is essentially shorthand for `tracker.query("account::service::provider::#{collection_query}")`)
 
-* Any Exceptions that occur in the Tracker's polling threads are rescued and logged. If you want to take further action, you can initialize the Tracker with an `:error_callback` Proc, similar to the Account update `:callback` -- except that the `:error_callback` should accept an Exception instead of an Array of Resources.
+* Any Exceptions that occur in the Tracker's polling threads are rescued and logged. If you want to take further action, you can initialize the Tracker with an `:error_callback` Proc. This is similar to the Account update `:callback` above, except that the parameter for `:error_callback` should be an Exception instead of an Array of Resources.
 
 
 ----------------

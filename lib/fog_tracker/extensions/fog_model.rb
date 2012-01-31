@@ -20,7 +20,7 @@ module FogTracker
         _fog_collection_tracker.clean_account_data
       end
 
-      # Returns Fog::Model resources from this Resource's account only
+      # Returns Fog::Model resources from this Resource's account only.
       # @param [String] collection_name a String which is converted to
       #   a RegEx, and used to match collection names for resources
       #   in the same account as the current resource.

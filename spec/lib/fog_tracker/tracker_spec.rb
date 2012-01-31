@@ -40,6 +40,15 @@ module FogTracker
       end
     end
 
+    describe '#all' do
+      it 'returns all resources tracked across all accounts' do
+        AccountTracker.any_instance.stub(:all_resources).and_return(['A', 'B', 'C'])
+        @tracker.start
+        sleep THREAD_STARTUP_DELAY
+        @tracker.all.should == ['A', 'B', 'C', 'A', 'B', 'C']
+      end
+    end
+
     describe '#query' do
       it "invokes any passed code block once per resulting Resource" do
         receiver = double "resource callback object"
@@ -51,15 +60,6 @@ module FogTracker
         @tracker.query('*::*::*::*') {|r| receiver.callback(r)}
       end
       it "passes the query request to its QueryProcessor"
-    end
-
-    describe '#all' do
-      it 'returns all resources tracked across all accounts' do
-        AccountTracker.any_instance.stub(:all_resources).and_return(['A', 'B', 'C'])
-        @tracker.start
-        sleep THREAD_STARTUP_DELAY
-        @tracker.all.should == ['A', 'B', 'C', 'A', 'B', 'C']
-      end
     end
 
     describe '#start' do

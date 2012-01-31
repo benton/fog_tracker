@@ -17,14 +17,14 @@ module FogTracker
     #    (should take a single Exception as its only required parameter)
     #  - :logger - a Ruby Logger-compatible object
     def initialize(accounts = {}, options = {})
-      @accounts = accounts
-      @delay    = options[:delay]
-      @callback = options[:callback]
-      @log      = options[:logger] || FogTracker.default_logger
+      @accounts   = accounts
+      @delay      = options[:delay]
+      @callback   = options[:callback]
+      @log        = options[:logger] || FogTracker.default_logger
       @error_proc = options[:error_callback]
+      @running    = false
       # Create a Hash that maps account names to AccountTrackers
       create_trackers
-      @running  = false
     end
 
     # Starts periodically polling all this tracker's accounts

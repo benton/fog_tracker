@@ -52,6 +52,12 @@ module FogTracker
         results
       end
 
+      # Returns a short description of this resource
+      # @return [String] a short description of this resource
+      def tracker_description
+         type = (self.class.name.match(/::([^:]+)$/))[1]
+        "#{type} #{self.identity} in account #{tracker_account[:name]}"
+      end
     end
   end
 end

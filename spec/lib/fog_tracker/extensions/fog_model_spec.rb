@@ -57,6 +57,14 @@ module FogTracker
         end
       end
 
+      describe "tracker_description" do
+        it "returns a short description of the resource" do
+          @model.tracker_description.should == "Server  in account "
+          @model.stub(:identity).and_return "fake ID"
+          @model.tracker_description.should == "Server fake ID in account "
+        end
+      end
+
       describe '#account_resources' do
         context "with no query processor assigned" do
           it "returns an empty Array" do

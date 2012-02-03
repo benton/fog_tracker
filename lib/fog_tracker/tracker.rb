@@ -102,9 +102,17 @@ module FogTracker
       @trackers = Hash.new
       @accounts.each do |name, account|
         @log.debug "Setting up tracker for account #{name}"
-        @trackers[name] = AccountTracker.new(name, account,
-        {:delay => @delay, :callback => @callback,
-          :error_callback => @error_proc, :logger => @log})
+        @trackers[name] = AccountTracker.new(name, account, {
+            :delay => @delay, :error_callback => @error_proc, :logger => @log,
+            :callback => Proc.new do |resources|
+              # attach a QueryProcessor to all returned resources
+              qp = FogTracker::Query::QueryProcessor.new(@trackers, :logger => @log)
+              resources.each {|resource| resource._query_processor = qp}
+              # now relay the resources back to the client software
+              @callback.call(resources) if @callback
+            end
+          }
+        )
       end
     end
 

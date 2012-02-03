@@ -87,7 +87,8 @@ How is it [done]? (Usage)
 * The resources returned from a query are all Fog::Model objects, but they are "decorated" with some extra methods for fetching the account information, or for fetching more resources. This simplifies the code that consumes the query results, because it does not have to know anything about the tracker. Here are the methods added by {FogTracker::Extensions::FogModel}:
   1. `tracker_account` returns a Hash of the Resource's account information _(:name is added; :credentials are removed)_.
   2. `tracker_query(query_string)` queries the tracker for more resources.
-  3. `account_resources(collection_query)` returns an Array of resources from the same account. (This is essentially shorthand for `tracker.query("account::service::provider::#{collection_query}")`)
+  3. `account_resources(collection_query)` also returns an Array of resources, but only from the same account. (This is essentially shorthand for `tracker_query("account::service::provider::#{collection_query}")`)
+  4. `tracker_description` returns a descriptive string that is short, but unique to this resource.
 
 * Any Exceptions that occur in the Tracker's polling threads are rescued and logged. If you want to take further action, you can initialize the Tracker with an `:error_callback` Proc. This is similar to the Account update `:callback` above, except that the parameter for `:error_callback` should be an Exception instead of an Array of Resources.
 

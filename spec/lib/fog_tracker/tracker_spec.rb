@@ -33,6 +33,14 @@ module FogTracker
       @tracker.logger.should == LOG
     end
 
+    it "attaches a query processor to resources returned by the callback" do
+      t = Tracker.new(ACCOUNTS, :logger => LOG,
+          :callback => Proc.new do |resources|
+            resources.each { |r| r._query_processor.should_not == nil }
+          end
+      ).update
+    end
+
     describe '#types_for_account' do
       it "returns an array of collection names for the given account" do
         [ "addresses", "flavors", "images", "key_pairs", "security_groups",

@@ -85,9 +85,15 @@ module FogTracker
 
     # Returns a Fog::Connection object to this account's Fog service
     def connection
-      service_mod = ::Fog::const_get @account[:service]
-      provider_class = service_mod.send(:const_get, @account[:provider])
-      @fog_service ||= provider_class.new(@account[:credentials])
+      if ::Fog::const_defined? @account[:service]
+        service_mod = ::Fog::const_get @account[:service]
+        provider_class = service_mod.send(:const_get, @account[:provider])
+        @fog_service ||= provider_class.new(@account[:credentials])
+      else
+        provider_mod = ::Fog::const_get @account[:provider]
+        service_class = provider_mod.send(:const_get, @account[:service])
+        @fog_service ||= service_class.new(@account[:credentials])
+      end
     end
 
     # Returns an Array of resource types (Strings) to track

@@ -19,19 +19,40 @@ module FogTracker
       end
 
       it "exposes its Hash of account information" do
-        @tracker.connection.should_not == nil
+        @tracker.account.should == FAKE_ACCOUNT
       end
       it "exposes the account name" do
         @tracker.name.should == FAKE_ACCOUNT_NAME
       end
-      it "exposes the connection to its Fog service" do
-        @tracker.account.should == FAKE_ACCOUNT
-      end
-      it "exposes the connection to its logger" do
+      it "exposes its logger" do
         @tracker.log.should_not == nil
       end
       it "always sets a polling time" do
         @tracker.account[:polling_time].should be_an_instance_of(Fixnum)
+      end
+
+      describe '#connection' do
+        context "when the provider is AWS" do
+          context "when the service is Compute" do
+            tracker =  AccountTracker.new("EC2 account", FAKE_ACCOUNT)
+            it "exposes the connection to its Fog service" do
+              tracker.connection.should_not == nil
+            end
+          end
+          context "when the service is RDS" do
+            tracker =  AccountTracker.new("EC2 account", {
+              :provider     => 'AWS',
+              :service      => 'RDS',
+              :credentials  => {
+                :aws_access_key_id => "fake user",
+                :aws_secret_access_key => 'fake password'
+              }
+            })
+            it "exposes the connection to its Fog service" do
+              tracker.connection.should_not == nil
+            end
+          end
+        end
       end
 
       describe '#update' do

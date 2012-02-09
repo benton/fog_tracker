@@ -65,8 +65,8 @@ How is it [done]? (Usage)
     # get all Amazon EC2 Resources, of all types, across all accounts
     tracker["*::Compute::AWS::*"]	# the [] operator is the same as query()
 
-    # get all S3 objects in a given account
-    tracker["my production account::Storage::AWS::files"]
+    # get all S3 buckets in a given account
+    tracker["my production account::Storage::AWS::directories"]
 
 ----------------
 *Usage Tips*

@@ -27,7 +27,7 @@ module FogTracker
       it "exposes its logger" do
         @tracker.log.should_not == nil
       end
-      it "always sets a polling time" do
+      it "always has a delay" do
         @tracker.account[:delay].should be_an_instance_of(Fixnum)
       end
 
@@ -75,6 +75,10 @@ module FogTracker
             CollectionTracker.any_instance.stub(:update).and_raise
             (Proc.new { @tracker.update }).should raise_error
           end
+        end
+        it "saves the update duration as @last_polling_time" do
+          @tracker.update
+          @tracker.last_polling_time.should_not == nil
         end
       end
 

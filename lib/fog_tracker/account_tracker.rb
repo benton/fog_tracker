@@ -12,6 +12,8 @@ module FogTracker
     attr_reader :log
     # How long to wait between successive polling of this account (Integer)
     attr_reader :delay
+    # The duration between the start and finish of the last successful poll
+    attr_reader :last_polling_time
 
     # Creates an object for tracking all collections in a single Fog account
     # @param [String] account_name a human-readable name for the account
@@ -70,7 +72,9 @@ module FogTracker
     def update
       begin
         @log.info "Polling account #{@name}..."
+        update_start = Time.now
         @collection_trackers.each {|tracker| tracker.update}
+        @last_polling_time = Time.now - update_start
         @callback.call(all_resources) if @callback
       rescue Exception => e
         @log.error "Exception polling account #{name}: #{e.message}"

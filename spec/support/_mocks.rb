@@ -8,7 +8,7 @@ module FogTracker
   FAKE_ACCOUNT = {
     :provider     => 'AWS',
     :service      => 'Compute',
-    :polling_time => 10,
+    :delay => 10,
     :credentials  => {
       :aws_access_key_id => "fake user",
       :aws_secret_access_key => 'fake password'

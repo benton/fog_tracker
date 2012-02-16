@@ -28,7 +28,7 @@ module FogTracker
         @tracker.log.should_not == nil
       end
       it "always sets a polling time" do
-        @tracker.account[:polling_time].should be_an_instance_of(Fixnum)
+        @tracker.account[:delay].should be_an_instance_of(Fixnum)
       end
 
       describe '#connection' do

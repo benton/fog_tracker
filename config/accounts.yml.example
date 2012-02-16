@@ -4,7 +4,7 @@ AWS EC2 production account:
   :credentials: 
     :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
     :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  :polling_time: 120
+  :delay: 120
   :exclude_resources:
 AWS EC2 development account: 
   :provider: AWS
@@ -12,7 +12,7 @@ AWS EC2 development account:
   :credentials: 
     :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
     :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  :polling_time: 180
+  :delay: 180
   :exclude_resources:
   - :flavors
   - :images
@@ -22,4 +22,4 @@ Rackspace development account:
   :credentials: 
     :rackspace_api_key: XXXXXXXXXXXXXXXXXXXX
     :rackspace_username: XXXXXXXXX
-  :polling_time: 180
+  :delay: 180

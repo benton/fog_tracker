@@ -41,7 +41,7 @@ How is it [done]? (Usage)
       :credentials:
         :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
         :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      :polling_time: 180
+      :delay: 180
 	  :exclude_resources:
 	  - :flavors
 	  - :images
@@ -51,7 +51,7 @@ How is it [done]? (Usage)
       :credentials:
         :rackspace_api_key: XXXXXXXXXXXXXXXXXXXX
         :rackspace_username: XXXXXXXXX
-      :polling_time: 180
+      :delay: 180
 
 2) Call `start` on the Tracker. It will run asynchronously, with one thread per account. At any time, you can call `start` or `stop` on it, and query the resulting collections of Fog Resource objects.
 

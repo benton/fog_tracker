@@ -40,10 +40,12 @@ module FogTracker
 
     # @return [Hash] a Hash of account information, slighly modified:
     #    a :name parameter is added, and the :credentials are removed
+    #    :last_polling_time is also added
     def clean_account_data
       @clean_data ||= @account  # generate this data only once per res
       @clean_data[:name] = @account_name
       @clean_data[:credentials] = Hash.new
+      @clean_data[:last_polling_time] = @account_tracker.last_polling_time
       @clean_data
     end
 

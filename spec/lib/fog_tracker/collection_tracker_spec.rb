@@ -26,6 +26,7 @@ module FogTracker
           @tracker.collection.each do |resource|
             resource.tracker_account[:name].should == FAKE_ACCOUNT_NAME
             resource.tracker_account[:credentials].should == {}
+            resource.tracker_account[:last_polling_time].should_not == nil
           end
         end
       end

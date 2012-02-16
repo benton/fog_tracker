@@ -22,11 +22,16 @@ module FogTracker
           @tracker.update
         end
         it "attaches account information to all resources" do
+          fake_connection = double('mock fog connection')
+          fake_connection.stub(:servers).and_return(
+            [Fog::Compute[:aws].servers.new])
+          @account_tracker.stub(:connection).and_return fake_connection
+          @account_tracker.stub(:last_polling_time).and_return 1
           @tracker.update
           @tracker.collection.each do |resource|
             resource.tracker_account[:name].should == FAKE_ACCOUNT_NAME
             resource.tracker_account[:credentials].should == {}
-            resource.tracker_account[:last_polling_time].should_not == nil
+            resource.tracker_account[:last_polling_time].should == 1
           end
         end
       end

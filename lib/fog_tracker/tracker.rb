@@ -92,6 +92,13 @@ module FogTracker
       results
     end
 
+    # Returns the time taken for a given account's most recent successful update
+    # @param [String] account_name the name of the account that was polled
+    # @return [Float] the amount of time taken, in seconds
+    def last_polling_time(account_name)
+      @trackers[account_name].last_polling_time
+    end
+
     # Returns this tracker's logger, for changing logging dynamically
     def logger ; @log end
 

@@ -66,6 +66,15 @@ module FogTracker
       end
     end
 
+    describe '#last_polling_time' do
+      context "when given an account name" do
+        it "returns duration of the account's most recent succesful update" do
+          @tracker.update
+          @tracker.last_polling_time(ACCOUNTS.keys.first).should_not == nil
+        end
+      end
+    end
+
     describe '#all' do
       WILDCARD_QUERY = '*::*::*::*'
       before(:each) do

@@ -60,7 +60,7 @@ module FogTracker
     # Stops polling this tracker's account
     def stop
       if running?
-        @log.info "Stopping tracker for #{name}..."
+        @log.info "Stopping tracker for #{@name}..."
         @timer.kill
         @timer = nil
       else
@@ -75,6 +75,7 @@ module FogTracker
         update_start = Time.now
         @collection_trackers.each {|tracker| tracker.update}
         @last_polling_time = Time.now - update_start
+        @log.info "Polled account #{@name} in #{@last_polling_time} seconds"
         @callback.call(all_resources) if @callback
       rescue Exception => e
         @log.error "Exception polling account #{name}: #{e.message}"

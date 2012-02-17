@@ -36,7 +36,7 @@ module FogTracker
       # Returns an Array of 4 RegEx objeccts based on the +query_string+
       # for matching [account name, service, provider, collection]
       def parse_query(query_string)
-        @log.debug "Parsing Query #{query_string}"
+        #@log.debug "Parsing Query #{query_string}"
         tokenize(query_string).map {|token| regex_from_token(token)}
       end
 

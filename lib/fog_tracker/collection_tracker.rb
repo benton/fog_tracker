@@ -24,17 +24,17 @@ module FogTracker
     # Polls the {AccountTracker}'s connection for updated info on all existing
     # instances of this tracker's resource_type
     def update
-      @log.info "Polling #{@type} on #{@account_name}..."
+      new_collection = Array.new
       fog_collection = @account_tracker.connection.send(@type) || Array.new
       @log.info "Fetching #{fog_collection.count} #{@type} on #{@account_name}."
-      new_collection = Array.new
       # Here's where most of the network overhead is actually incurred
       fog_collection.each do |resource|
         @log.debug "Fetching resource: #{resource.class} #{resource.identity}"
         resource._fog_collection_tracker = self
         new_collection << resource
-        @log.debug "Got resource: #{resource.inspect}"
+        #@log.debug "Got resource: #{resource.inspect}"
       end
+      @log.info "Fetched #{new_collection.count} #{@type} on #{@account_name}."
       @collection = new_collection
     end
 

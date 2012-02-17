@@ -76,9 +76,11 @@ module FogTracker
             (Proc.new { @tracker.update }).should raise_error
           end
         end
-        it "saves the update duration as @last_polling_time" do
+        it "saves the time of it's next-to-last update as @preceeding_update_time" do
           @tracker.update
-          @tracker.last_polling_time.should_not == nil
+          @tracker.preceeding_update_time.should == nil
+          @tracker.update
+          @tracker.preceeding_update_time.should_not == nil
         end
       end
 

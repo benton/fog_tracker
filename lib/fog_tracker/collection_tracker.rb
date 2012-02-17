@@ -45,7 +45,7 @@ module FogTracker
       @clean_data ||= @account  # generate this data only once per res
       @clean_data[:name] = @account_name
       @clean_data[:credentials] = Hash.new
-      @clean_data[:last_polling_time] = @account_tracker.last_polling_time
+      @clean_data[:preceeding_update_time] = @account_tracker.preceeding_update_time
       @clean_data
     end
 

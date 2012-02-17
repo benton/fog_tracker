@@ -66,11 +66,13 @@ module FogTracker
       end
     end
 
-    describe '#last_polling_time' do
+    describe '#preceeding_update_time' do
       context "when given an account name" do
-        it "returns duration of the account's most recent succesful update" do
+        it "returns time of the account's next-most-recent succesful update" do
           @tracker.update
-          @tracker.last_polling_time(ACCOUNTS.keys.first).should_not == nil
+          @tracker.preceeding_update_time(ACCOUNTS.keys.first).should == nil
+          @tracker.update
+          @tracker.preceeding_update_time(ACCOUNTS.keys.first).should_not == nil
         end
       end
     end

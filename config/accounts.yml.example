@@ -1,25 +1,29 @@
-AWS EC2 production account: 
-  :provider: AWS
-  :service: Compute
-  :credentials: 
+AWS EC2 production account:   # The account name - can be anything
+  :provider: AWS      # This is the Fog provider Module
+  :service: Compute   # The Fog service Module. So, Fog::Compute::AWS
+  :credentials:
     :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
     :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  :delay: 120
+  :delay: 120 # Wait time between successive pollings (in seconds)
   :exclude_resources:
-AWS EC2 development account: 
+  - :account  # No need to poll for accounts - those are listed here
+  - :flavors  # You may or may not want EC2 server types
+  - :images   # Takes a while to list all AMIs (works though)
+AWS S3 development account:
   :provider: AWS
-  :service: Compute
-  :credentials: 
+  :service: Storage
+  :credentials:
     :aws_access_key_id: XXXXXXXXXXXXXXXXXXXX
     :aws_secret_access_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-  :delay: 180
+  :delay: 150
   :exclude_resources:
-  - :flavors
-  - :images
-Rackspace development account: 
+  #- :directories   # The S3 buckets - fetch the list
+  - :files          # "secondary" entity to buckets - does not work yet
+Rackspace development account:
   :provider: Rackspace
   :service: Compute
-  :credentials: 
+  :credentials:
     :rackspace_api_key: XXXXXXXXXXXXXXXXXXXX
     :rackspace_username: XXXXXXXXX
   :delay: 180
+  :exclude_resources: # Don't know which of these work yet...

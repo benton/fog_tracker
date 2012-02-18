@@ -1,7 +1,7 @@
 module FogTracker
   module Query
-    # A class for gathering all Fog resources for a set of {AccountTracker}s,
-    # and filtering them based on a regular-expression-based query
+    # A class for filtering the Fog resources for a set of {AccountTracker}s,
+    # based on a regular-expression-based query
     class QueryProcessor
 
       # The Regular Expression which all resource queries must match
@@ -16,7 +16,7 @@ module FogTracker
         @log      = options[:logger] || FogTracker.default_logger
       end
 
-      # Uses the query string to filter this account's resources
+      # Uses the query string to filter all polled resources
       # for a desired subset
       # @param [String] query a string used to filter for matching resources
       # @return [Array <Fog::Model>] an Array of Resources, filtered by query

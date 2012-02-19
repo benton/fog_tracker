@@ -28,10 +28,7 @@ module FogTracker
         results = Array.new
         if @_query_processor
           results = @_query_processor.execute(
-            "#{tracker_account[:name]}::"+
-            "#{tracker_account[:service]}::"+
-            "#{tracker_account[:provider]}::"+
-            "#{collection_name}"
+            "#{tracker_account[:name]}::*::*::#{collection_name}"
           )
           (results.each {|r| yield r}) if block_given?
         end

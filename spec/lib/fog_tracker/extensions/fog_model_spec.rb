@@ -74,17 +74,15 @@ module FogTracker
         context "with a query processor assigned" do
           before(:each) do
             collection_tracker = double("fake collection tracker")
-            collection_tracker.stub(:clean_account_data).and_return({
-              :name => 'fake account', :service => 'service',
-              :provider => 'provider'
-            })
+            collection_tracker.stub(:clean_account_data).
+              and_return({:name => 'fake account'})
             @fake_processor = double "mock query processor"
             @model._fog_collection_tracker = collection_tracker
             @model._query_processor = @fake_processor
           end
           it "forwards the scoped collection query to its query processor" do
             @fake_processor.should_receive(:execute).with(
-              'fake account::service::provider::collection_query'
+              'fake account::*::*::collection_query'
             )
             @model.account_resources('collection_query')
           end

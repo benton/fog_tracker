@@ -1,1 +1,1 @@
---no-private --protected lib/**/*.rb
+--no-private --protected lib/**/*.rb - LICENSE.TXT

@@ -127,7 +127,7 @@ module FogTracker
     # Changes Strings to Symbols in Account keys
     def validate_accounts
       @accounts.each do |name, account|
-        account.symbolize_keys(recursive = false)
+        account.symbolize_keys
         raise "Account #{name} defines no service" if not account[:service]
         raise "Account #{name} defines no provider" if not account[:provider]
         raise "Account #{name} defines no credentials" if not account[:credentials]

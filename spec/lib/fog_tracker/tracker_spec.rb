@@ -6,8 +6,8 @@ module FogTracker
         'provider'                => 'AWS',
         :service                  => 'Compute',
         :credentials => {
-          :aws_access_key_id      => 'X',
-          :aws_secret_access_key  => 'X'
+          'aws_access_key_id'      => 'X',
+          'aws_secret_access_key'  => 'X'
         }, 'exclude_resources'     => [ 'spot_requests' ]
       },
       "fake account 2" => {

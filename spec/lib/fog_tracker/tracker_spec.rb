@@ -3,16 +3,16 @@ module FogTracker
 
     ACCOUNTS = {
       "fake account 1" => {
-        :provider                 => 'AWS',
+        'provider'                => 'AWS',
         :service                  => 'Compute',
         :credentials => {
           :aws_access_key_id      => 'X',
           :aws_secret_access_key  => 'X'
-        }, :exclude_resources     => [ :spot_requests ]
+        }, 'exclude_resources'     => [ 'spot_requests' ]
       },
       "fake account 2" => {
         :provider                 => 'AWS',
-        :service                  => 'Compute',
+        'service'                 => 'Compute',
         :credentials => {
           :aws_access_key_id      => 'X',
           :aws_secret_access_key  => 'X'

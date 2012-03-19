@@ -4,7 +4,7 @@ module FogTracker
   class Tracker
 
     #a Hash of account information (see accounts.yml.example)
-    attr_accessor :accounts
+    attr_reader :accounts
 
     # Creates an object for tracking multiple Fog accounts
     # @param [Hash] accounts a Hash of account information
@@ -17,12 +17,12 @@ module FogTracker
     #    (should take a single Exception as its only required parameter)
     #  - :logger - a Ruby Logger-compatible object
     def initialize(accounts = {}, options = {})
-      @accounts   = FogTracker.validate_accounts(accounts)
       @delay      = options[:delay]
       @callback   = options[:callback]
       @log        = options[:logger] || FogTracker.default_logger
       @error_proc = options[:error_callback]
       @running    = false
+      self.accounts= accounts
       # Create a Hash that maps account names to AccountTrackers
       create_trackers
     end
@@ -101,6 +101,21 @@ module FogTracker
 
     # Returns this tracker's logger, for changing logging dynamically
     def logger ; @log end
+
+    # Sets the account information.
+    # If any account info has changed, all trackers are restarted.
+    # @param [Hash] accounts a Hash of account information
+    #    (see accounts.yml.example)
+    def accounts=(new_accounts)
+      old_accounts = @accounts
+      @accounts = FogTracker.validate_accounts(new_accounts)
+      if (@accounts != old_accounts)
+        stop if (was_running = running?)
+        create_trackers
+        start if was_running
+      end
+      @accounts
+    end
 
     private
 

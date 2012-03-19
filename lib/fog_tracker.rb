@@ -21,4 +21,23 @@ module FogTracker
     logger
   end
 
+  # Performs validation and cleanup on an Array of account Hashes.
+  # Changes Strings to Symbols for all required keys.
+  # @param [Hash] account_array an Array of Hash objects.
+  # @return [Hash] the cleaned, validated Hash of account info.
+  def self.validate_accounts(account_hash)
+    account_hash.each do |name, account|
+      account.symbolize_keys
+      raise "Account #{name} defines no service" if not account[:service]
+      raise "Account #{name} defines no provider" if not account[:provider]
+      raise "Account #{name} defines no credentials" if not account[:credentials]
+      if account[:exclude_resources]
+        account[:exclude_resources] = account[:exclude_resources].map do |r|
+          r.to_sym
+        end
+      end
+    end
+    account_hash
+  end
+
 end

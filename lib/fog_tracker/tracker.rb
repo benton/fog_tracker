@@ -17,13 +17,12 @@ module FogTracker
     #    (should take a single Exception as its only required parameter)
     #  - :logger - a Ruby Logger-compatible object
     def initialize(accounts = {}, options = {})
-      @accounts   = accounts
+      @accounts   = FogTracker.validate_accounts(accounts)
       @delay      = options[:delay]
       @callback   = options[:callback]
       @log        = options[:logger] || FogTracker.default_logger
       @error_proc = options[:error_callback]
       @running    = false
-      validate_accounts  # Make sure account data are OK
       # Create a Hash that maps account names to AccountTrackers
       create_trackers
     end
@@ -121,19 +120,6 @@ module FogTracker
             end
           }
         )
-      end
-    end
-
-    # Changes Strings to Symbols in Account keys
-    def validate_accounts
-      @accounts.each do |name, account|
-        account.symbolize_keys
-        raise "Account #{name} defines no service" if not account[:service]
-        raise "Account #{name} defines no provider" if not account[:provider]
-        raise "Account #{name} defines no credentials" if not account[:credentials]
-        account[:exclude_resources] = account[:exclude_resources].map do |r|
-          r.to_sym
-        end
       end
     end
 

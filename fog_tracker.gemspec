@@ -22,7 +22,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # Runtime dependencies
-  s.add_dependency "fog"
+  # Fog v1.2.0 has a bug in Compute[:aws].servers
+  s.add_dependency "fog", ::Gem::Requirement.new("<= 1.2")
+  s.add_dependency "fog", ::Gem::Requirement.new(">= 1")
 
   # Development / Test dependencies
   s.add_development_dependency "rake"

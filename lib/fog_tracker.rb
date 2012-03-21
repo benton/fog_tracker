@@ -21,6 +21,14 @@ module FogTracker
     logger
   end
 
+  # Loads account information defined in account_file.
+  # @param account_file the path to a YAML file (see accounts.example.yml).
+  # @return [Hash] the cleaned, validated Hash of account info.
+  def self.read_accounts(account_file = ENV['ACCOUNT_FILE'])
+    account_file ||= "./config/accounts.yml"
+    FogTracker.validate_accounts(YAML::load(File.read account_file))
+  end
+
   # Performs validation and cleanup on an Array of account Hashes.
   # Changes Strings to Symbols for all required keys.
   # @param [Hash] account_array an Array of Hash objects.

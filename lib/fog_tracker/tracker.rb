@@ -3,12 +3,12 @@ module FogTracker
   # Tracks one or more Fog accounts and exposes a {#query} on the results
   class Tracker
 
-    #a Hash of account information (see accounts.yml.example)
+    #a Hash of account information (see accounts.example.yml)
     attr_reader :accounts
 
     # Creates an object for tracking multiple Fog accounts
     # @param [Hash] accounts a Hash of account information
-    #    (see accounts.yml.example)
+    #    (see accounts.example.yml)
     # @param [Hash] options optional additional parameters:
     #  - :delay (Integer) - Default time between polling of accounts
     #  - :callback (Proc) - A Method or Proc to call each time an account is polled.
@@ -105,7 +105,7 @@ module FogTracker
     # Sets the account information.
     # If any account info has changed, all trackers are restarted.
     # @param [Hash] accounts a Hash of account information
-    #    (see accounts.yml.example)
+    #    (see accounts.example.yml)
     def accounts=(new_accounts)
       old_accounts = @accounts
       @accounts = FogTracker.validate_accounts(new_accounts)

@@ -1,25 +1,33 @@
 module FogTracker
-  
+
+  describe '#read_accounts' do
+    it "converts a YAML file into a Hash of account info" do
+      accounts = FogTracker.read_accounts('./config/accounts.example.yml')
+      accounts.should be_a Hash
+      accounts.should_not be_empty
+    end
+  end
+
   describe '#validate_accounts' do
-    it "should raise an exception when no service is specified" do
+    it "raises an exception when no service is specified" do
       (Proc.new { FogTracker.validate_accounts(
           FAKE_ACCOUNT_NAME => FAKE_ACCOUNT.merge({:service => nil})
         )}).should raise_error
     end
-    
-    it "should raise an exception when no provider is specified" do
+
+    it "raises an exception when no provider is specified" do
       (Proc.new { FogTracker.validate_accounts(
           FAKE_ACCOUNT_NAME => FAKE_ACCOUNT.merge({:provider => nil})
         )}).should raise_error
     end
-    
-    it "should raise an exception when no credentials are specified" do
+
+    it "raises an exception when no credentials are specified" do
       (Proc.new { FogTracker.validate_accounts(
           FAKE_ACCOUNT_NAME => FAKE_ACCOUNT.merge({:credentials => nil})
         )}).should raise_error
     end
 
-    it "should symbolize all account keys" do
+    it "symbolizes all account keys" do
       validated_accounts = FogTracker.validate_accounts(
         FAKE_ACCOUNT_NAME => {
           'provider'     => 'AWS',

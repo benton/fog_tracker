@@ -4,7 +4,7 @@ task :track do
 
   # Setup logging
   log = FogTracker.default_logger(STDOUT)
-  log.level = ::Logger.const_get((ENV['LOG_LEVEL'] || 'INFO').to_sym)
+  log.level = ::Logger.const_get((ENV['LOG_LEVEL'] || 'INFO').upcase.to_sym)
 
   log.info "Loading account information..."
   accounts = FogTracker.read_accounts './config/accounts.yml'
